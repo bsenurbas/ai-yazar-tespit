@@ -1,0 +1,44 @@
+# Sanal ortam
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Veri ve modeller (büyük dosyalar)
+data/raw/
+data/processed/
+models/*.pkl
+models/*.joblib
+
+# Raporlar (opsiyonel)
+reports/
+
+# Ortam değişkenleri
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Loglar
+*.log
+logs/
