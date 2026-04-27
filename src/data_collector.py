@@ -16,6 +16,18 @@ BOOKS = [
     # H.G. Wells
     ("wells", "the_time_machine", "https://www.gutenberg.org/cache/epub/35/pg35.txt"),
     ("wells", "the_war_of_the_worlds", "https://www.gutenberg.org/cache/epub/36/pg36.txt"),
+
+    # Wells için ek kitaplar
+    ("wells", "the_invisible_man", "https://www.gutenberg.org/cache/epub/5230/pg5230.txt"),
+    ("wells", "the_island_of_doctor_moreau", "https://www.gutenberg.org/cache/epub/159/pg159.txt"),
+    ("wells", "the_first_men_in_the_moon", "https://www.gutenberg.org/cache/epub/1013/pg1013.txt"),
+
+    # Doyle için ek kitap
+    ("doyle", "memoirs_of_sherlock_holmes", "https://www.gutenberg.org/cache/epub/834/pg834.txt"),
+
+    # Poe için ek eserler
+    ("poe", "the_works_of_poe_vol1", "https://www.gutenberg.org/cache/epub/2148/pg2148.txt"),
+    ("poe", "the_works_of_poe_vol3", "https://www.gutenberg.org/cache/epub/2150/pg2150.txt"),
 ]
 
 def download_books(output_dir="data/raw"):

@@ -47,16 +47,19 @@ def train_all_models(X_train, y_train):
     models = {
         "Logistic Regression": LogisticRegression(
             max_iter=1000,
-            random_state=42
+            random_state=42,
+            class_weight="balanced"
         ),
         "SVM": SVC(
-            kernel="linear",  # Metin için linear kernel genellikle iyi çalışır
+            kernel="linear",
             random_state=42,
-            probability=True
+            probability=True,
+            class_weight="balanced"
         ),
         "Random Forest": RandomForestClassifier(
             n_estimators=100,
-            random_state=42
+            random_state=42,
+            class_weight="balanced"
         ),
     }
 
