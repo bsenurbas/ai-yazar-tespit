@@ -1,5 +1,6 @@
 import argparse
 import os
+from src.utils import balance_dataset
 
 
 def run_download():
@@ -17,6 +18,7 @@ def run_train():
 
     print("Veri yükleniyor...")
     dataset = load_author_texts()
+    dataset = balance_dataset(dataset)
 
     print("Özellikler çıkarılıyor...")
     X, y, feature_names = build_feature_matrix(dataset)
@@ -50,6 +52,7 @@ def run_evaluate():
         scaler = pickle.load(f)
 
     dataset = load_author_texts()
+    dataset = balance_dataset(dataset)
     _, _, feature_names = build_feature_matrix(dataset)
 
     llm_dataset = load_llm_texts()
