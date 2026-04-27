@@ -22,8 +22,6 @@ data/processed/
 models/*.pkl
 models/*.joblib
 
-# Raporlar (opsiyonel)
-reports/
 
 # Ortam değişkenleri
 .env
