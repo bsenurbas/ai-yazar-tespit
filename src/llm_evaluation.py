@@ -37,7 +37,8 @@ def load_llm_texts(llm_dir="data/llm_generated"):
                     raw_text = f.read()
 
                 text = clean_text(raw_text)
-                chunks = split_into_chunks(text, chunk_size=150)
+                chunks = split_into_chunks(text, chunk_size=300)
+                chunks = [c for c in chunks if len(c.split()) >= 200]
 
                 for chunk in chunks:
                     dataset.append((chunk, author, source))
