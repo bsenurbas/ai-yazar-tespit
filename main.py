@@ -66,6 +66,20 @@ def run_evaluate():
     results = evaluate_llm_texts(llm_dataset, model, scaler, label_encoder, feature_names)
     print_results(results)
 
+def run_tfidf():
+    print("\n=== TF-IDF MODEL ===")
+    from src.preprocessing import load_author_texts
+    from src.tfidf_model import train_tfidf_model, evaluate_tfidf_llm
+    from src.llm_evaluation import load_llm_texts
+
+    dataset = load_author_texts()
+    groups = [d[2] for d in dataset]
+
+    pipeline, le, acc = train_tfidf_model(dataset, groups)
+
+    print("\nLLM metinleri değerlendiriliyor...")
+    llm_dataset = load_llm_texts()
+    evaluate_tfidf_llm(llm_dataset, pipeline, le)
 
 def run_all():
     run_download()
@@ -80,7 +94,7 @@ def main():
     )
     parser.add_argument(
         "--mode",
-        choices=["download", "train", "evaluate", "all"],
+        choices=["download", "train", "evaluate","tfidf", "all"],
         required=True,
         help=(
             "download  → Kitapları indir\n"
@@ -99,6 +113,8 @@ def main():
         run_evaluate()
     elif args.mode == "all":
         run_all()
+    elif args.mode == "tfidf":
+        run_tfidf()
 
 
 if __name__ == "__main__":
