@@ -1,0 +1,55 @@
+import urllib.request
+import os
+import time
+
+# Project Gutenberg'den indirilecek kitaplar
+# Format: (yazar_adı, eser_adı, gutenberg_url)
+BOOKS = [
+    # Edgar Allan Poe
+    ("poe", "the_raven_and_other_poems", "https://www.gutenberg.org/cache/epub/150/pg150.txt"),
+    ("poe", "tales_of_mystery", "https://www.gutenberg.org/cache/epub/2147/pg2147.txt"),
+    
+    # Arthur Conan Doyle
+    ("doyle", "adventures_of_sherlock_holmes", "https://www.gutenberg.org/cache/epub/1661/pg1661.txt"),
+    ("doyle", "hound_of_baskervilles", "https://www.gutenberg.org/cache/epub/2852/pg2852.txt"),
+    
+    # H.G. Wells
+    ("wells", "the_time_machine", "https://www.gutenberg.org/cache/epub/35/pg35.txt"),
+    ("wells", "the_war_of_the_worlds", "https://www.gutenberg.org/cache/epub/36/pg36.txt"),
+]
+
+def download_books(output_dir="data/raw"):
+    """Kitapları Project Gutenberg'den indirir."""
+    
+    for author, title, url in BOOKS:
+        # Yazar klasörünü oluştur
+        author_dir = os.path.join(output_dir, author)
+        os.makedirs(author_dir, exist_ok=True)
+        
+        filepath = os.path.join(author_dir, f"{title}.txt")
+        
+        # Daha önce indirildiyse atla
+        if os.path.exists(filepath):
+            print(f"Zaten mevcut: {author}/{title}")
+            continue
+        
+        print(f"İndiriliyor: {author}/{title}...")
+        
+        try:
+            headers = {"User-Agent": "Mozilla/5.0"}
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=30) as response:
+                content = response.read().decode("utf-8", errors="ignore")
+            
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(content)
+            
+            print(f"✓ İndirildi: {author}/{title}")
+            time.sleep(2)  # Gutenberg'e saygılı ol, hızlı istek atma
+            
+        except Exception as e:
+            print(f"✗ Hata: {author}/{title} — {e}")
+
+if __name__ == "__main__":
+    download_books()
+    print("\nTüm indirmeler tamamlandı!")
