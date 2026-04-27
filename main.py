@@ -1,7 +1,7 @@
 import argparse
 import os
 from src.utils import balance_dataset
-
+from src.model import prepare_data_grouped
 
 def run_download():
     print("\n=== VERİ İNDİRME ===")
@@ -18,13 +18,18 @@ def run_train():
 
     print("Veri yükleniyor...")
     dataset = load_author_texts()
-    dataset = balance_dataset(dataset)
+
+    # Book-level split için kitap isimlerini ayır
+    chunks_and_labels = [(d[0], d[1]) for d in dataset]
+    groups = [d[2] for d in dataset]
 
     print("Özellikler çıkarılıyor...")
-    X, y, feature_names = build_feature_matrix(dataset)
+    X, y, feature_names = build_feature_matrix(chunks_and_labels)
 
-    print("Veri bölünüyor...")
-    X_train, X_test, y_train, y_test, le, scaler = prepare_data(X, y)
+    print("Veri bölünüyor (book-level)...")
+    X_train, X_test, y_train, y_test, le, scaler = prepare_data_grouped(
+        X, y, groups
+    )
     print(f"Eğitim: {X_train.shape[0]} | Test: {X_test.shape[0]}")
 
     print("Modeller eğitiliyor...")
@@ -52,8 +57,8 @@ def run_evaluate():
         scaler = pickle.load(f)
 
     dataset = load_author_texts()
-    dataset = balance_dataset(dataset)
-    _, _, feature_names = build_feature_matrix(dataset)
+    chunks_and_labels = [(d[0], d[1]) for d in dataset]
+    _, _, feature_names = build_feature_matrix(chunks_and_labels)
 
     llm_dataset = load_llm_texts()
     print(f"Toplam LLM chunk: {len(llm_dataset)}")

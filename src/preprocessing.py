@@ -118,7 +118,7 @@ def load_author_texts(data_dir="data/raw"):
             print(f"{author}/{filename}: {len(chunks)} chunk")
             
             for chunk in chunks:
-                dataset.append((chunk, author))
+                dataset.append((chunk, author, filename))
     
     return dataset
 

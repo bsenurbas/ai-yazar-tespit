@@ -1,6 +1,7 @@
 import os
 import pickle
 import numpy as np
+from sklearn.model_selection import GroupShuffleSplit
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -38,6 +39,34 @@ def prepare_data(X, y, test_size=0.2, random_state=42):
 
     return X_train, X_test, y_train, y_test, le, scaler
 
+def prepare_data_grouped(X, y, groups, test_size=0.2, random_state=42):
+    """
+    Kitap bazında train/test ayırır.
+    Aynı kitabın chunk'ları hem train hem test'e düşmez.
+    """
+    le = LabelEncoder()
+    y_encoded = le.fit_transform(y)
+
+    splitter = GroupShuffleSplit(
+        n_splits=1,
+        test_size=test_size,
+        random_state=random_state
+    )
+
+    train_idx, test_idx = next(
+        splitter.split(X, y_encoded, groups=groups)
+    )
+
+    X_train = X[train_idx]
+    X_test = X[test_idx]
+    y_train = y_encoded[train_idx]
+    y_test = y_encoded[test_idx]
+
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    return X_train, X_test, y_train, y_test, le, scaler
 
 def train_all_models(X_train, y_train):
     """
