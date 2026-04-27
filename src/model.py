@@ -80,6 +80,8 @@ def evaluate_models(trained_models, X_train, X_test, y_train, y_test, label_enco
 
     for name, model in trained_models.items():
         y_pred = model.predict(X_test)
+        y_pred_labels = label_encoder.inverse_transform(y_pred)
+        y_test_labels = label_encoder.inverse_transform(y_test)
 
         acc = accuracy_score(y_test, y_pred)
 
@@ -92,8 +94,7 @@ def evaluate_models(trained_models, X_train, X_test, y_train, y_test, label_enco
         print(f"CV Accuracy   : {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
         print(f"\nClassification Report:")
         print(classification_report(
-            y_test, y_pred,
-            target_names=label_encoder.classes_
+            y_test_labels, y_pred_labels
         ))
 
         results[name] = {
@@ -163,8 +164,8 @@ def save_best_model(results, label_encoder, scaler, output_dir="models"):
 
 
 if __name__ == "__main__":
-    from preprocessing import load_author_texts
-    from features import build_feature_matrix
+    from src.preprocessing import load_author_texts
+    from src.features import build_feature_matrix
 
     print("Veri yükleniyor...")
     dataset = load_author_texts()

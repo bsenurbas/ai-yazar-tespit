@@ -6,7 +6,6 @@ import time
 # Format: (yazar_adı, eser_adı, gutenberg_url)
 BOOKS = [
     # Edgar Allan Poe
-    ("poe", "the_raven_and_other_poems", "https://www.gutenberg.org/cache/epub/150/pg150.txt"),
     ("poe", "tales_of_mystery", "https://www.gutenberg.org/cache/epub/2147/pg2147.txt"),
     
     # Arthur Conan Doyle

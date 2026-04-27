@@ -2,8 +2,8 @@ import os
 import pickle
 import numpy as np
 from collections import defaultdict, Counter
-from preprocessing import clean_text, split_into_chunks
-from features import build_feature_matrix, extract_features
+from src.preprocessing import clean_text, split_into_chunks
+from src.features import build_feature_matrix, extract_features
 
 
 def load_llm_texts(llm_dir="data/llm_generated"):
@@ -59,7 +59,7 @@ def evaluate_llm_texts(llm_dataset, model, scaler, label_encoder, feature_names)
         x = np.array([[feat.get(k, 0) for k in feature_names]])
         x_scaled = scaler.transform(x)
         pred_encoded = model.predict(x_scaled)[0]
-        pred_author = label_encoder.inverse_transform([pred_encoded])[0]
+        pred_author = str(label_encoder.inverse_transform([pred_encoded])[0])
 
         is_correct = (pred_author == true_author)
         results[source][true_author]["total"] += 1
