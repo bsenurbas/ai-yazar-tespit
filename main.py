@@ -139,6 +139,63 @@ def run_importance():
     plot_feature_importance(top_names, top_importances)
     plot_importance_by_author(X, y, feature_names, groups)
 
+def run_ensemble():
+    print("\n=== ENSEMBLE MODEL ===")
+    import numpy as np
+    from src.preprocessing import load_author_texts
+    from src.features import build_feature_matrix
+    from src.llm_evaluation import load_llm_texts
+    from src.ensemble_model import build_ensemble, evaluate_ensemble_llm
+
+    print("Veri yükleniyor...")
+    dataset = load_author_texts()
+    groups = [d[2] for d in dataset]
+    texts = [d[0] for d in dataset]
+    chunks_and_labels = [(d[0], d[1]) for d in dataset]
+
+    print("Özellikler çıkarılıyor...")
+    X, y, feature_names = build_feature_matrix(chunks_and_labels)
+    X = np.array(X)
+
+    model, tfidf, scaler, top_indices, le, acc = build_ensemble(
+        X, texts, y, groups, feature_names, top_n_features=50
+    )
+
+    print("\nLLM metinleri değerlendiriliyor...")
+    llm_dataset = load_llm_texts()
+    evaluate_ensemble_llm(
+        llm_dataset, model, tfidf, scaler,
+        top_indices, le, feature_names
+    )
+
+def run_humanvsllm():
+    print("\n=== HUMAN vs LLM SINIFLANDIRMASI ===")
+    from src.preprocessing import load_author_texts
+    from src.llm_evaluation import load_llm_texts
+    from src.human_vs_llm import (
+        build_human_vs_llm_dataset,
+        train_human_vs_llm,
+        plot_confusion_matrix_hvl,
+        analyze_by_source
+    )
+
+    print("Veri yükleniyor...")
+    original_dataset = load_author_texts()
+    llm_dataset = load_llm_texts()
+
+    print("\nDataset hazırlanıyor...")
+    texts, labels, sources = build_human_vs_llm_dataset(
+        original_dataset, llm_dataset
+    )
+
+    print("\nModel eğitiliyor...")
+    pipeline, best_name, results, X_test, y_test = train_human_vs_llm(
+        texts, labels
+    )
+
+    plot_confusion_matrix_hvl(pipeline, X_test, y_test)
+    analyze_by_source(pipeline, llm_dataset)
+
 def run_all():
     run_download()
     run_train()
@@ -152,7 +209,7 @@ def main():
     )
     parser.add_argument(
         "--mode",
-        choices=["download", "train", "evaluate","tfidf","visualize", "importance", "all"],
+        choices=["download", "train", "evaluate","tfidf","visualize", "importance", "ensemble", "humanvsllm", "all"],
         required=True,
         help=(
             "download  → Kitapları indir\n"
@@ -177,6 +234,10 @@ def main():
         run_visualize()
     elif args.mode == "importance":
         run_importance()
+    elif args.mode == "ensemble":
+        run_ensemble()
+    elif args.mode == "humanvsllm":
+        run_humanvsllm()
 
 if __name__ == "__main__":
     main()
