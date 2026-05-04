@@ -143,7 +143,7 @@ def build_feature_matrix(dataset):
 
 
 if __name__ == "__main__":
-    from preprocessing import load_author_texts
+    from src.preprocessing import load_author_texts
     
     print("Metinler yükleniyor...")
     dataset = load_author_texts()

@@ -1,6 +1,7 @@
 import os
 import pickle
 import numpy as np
+from sklearn.model_selection import GroupShuffleSplit
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -38,6 +39,34 @@ def prepare_data(X, y, test_size=0.2, random_state=42):
 
     return X_train, X_test, y_train, y_test, le, scaler
 
+def prepare_data_grouped(X, y, groups, test_size=0.2, random_state=42):
+    """
+    Kitap bazında train/test ayırır.
+    Aynı kitabın chunk'ları hem train hem test'e düşmez.
+    """
+    le = LabelEncoder()
+    y_encoded = le.fit_transform(y)
+
+    splitter = GroupShuffleSplit(
+        n_splits=1,
+        test_size=test_size,
+        random_state=random_state
+    )
+
+    train_idx, test_idx = next(
+        splitter.split(X, y_encoded, groups=groups)
+    )
+
+    X_train = X[train_idx]
+    X_test = X[test_idx]
+    y_train = y_encoded[train_idx]
+    y_test = y_encoded[test_idx]
+
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    return X_train, X_test, y_train, y_test, le, scaler
 
 def train_all_models(X_train, y_train):
     """
@@ -47,16 +76,19 @@ def train_all_models(X_train, y_train):
     models = {
         "Logistic Regression": LogisticRegression(
             max_iter=1000,
-            random_state=42
+            random_state=42,
+            class_weight="balanced"
         ),
         "SVM": SVC(
-            kernel="linear",  # Metin için linear kernel genellikle iyi çalışır
+            kernel="linear",
             random_state=42,
-            probability=True
+            probability=True,
+            class_weight="balanced"
         ),
         "Random Forest": RandomForestClassifier(
             n_estimators=100,
-            random_state=42
+            random_state=42,
+            class_weight="balanced"
         ),
     }
 
@@ -77,6 +109,8 @@ def evaluate_models(trained_models, X_train, X_test, y_train, y_test, label_enco
 
     for name, model in trained_models.items():
         y_pred = model.predict(X_test)
+        y_pred_labels = label_encoder.inverse_transform(y_pred)
+        y_test_labels = label_encoder.inverse_transform(y_test)
 
         acc = accuracy_score(y_test, y_pred)
 
@@ -89,8 +123,7 @@ def evaluate_models(trained_models, X_train, X_test, y_train, y_test, label_enco
         print(f"CV Accuracy   : {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
         print(f"\nClassification Report:")
         print(classification_report(
-            y_test, y_pred,
-            target_names=label_encoder.classes_
+            y_test_labels, y_pred_labels
         ))
 
         results[name] = {
@@ -160,8 +193,8 @@ def save_best_model(results, label_encoder, scaler, output_dir="models"):
 
 
 if __name__ == "__main__":
-    from preprocessing import load_author_texts
-    from features import build_feature_matrix
+    from src.preprocessing import load_author_texts
+    from src.features import build_feature_matrix
 
     print("Veri yükleniyor...")
     dataset = load_author_texts()
