@@ -107,6 +107,38 @@ def run_visualize():
     plot_pca(X, authors, sources)
     plot_tsne(X, authors, sources)
 
+def run_importance():
+    print("\n=== FEATURE IMPORTANCE ===")
+    import numpy as np
+    from src.preprocessing import load_author_texts
+    from src.features import build_feature_matrix
+    from src.feature_importance import (
+        compute_feature_importance,
+        plot_feature_importance,
+        plot_importance_by_author
+    )
+
+    print("Veri yükleniyor...")
+    dataset = load_author_texts()
+    groups = [d[2] for d in dataset]
+    chunks_and_labels = [(d[0], d[1]) for d in dataset]
+
+    print("Özellikler çıkarılıyor...")
+    X, y, feature_names = build_feature_matrix(chunks_and_labels)
+    X = np.array(X)
+
+    print("Feature importance hesaplanıyor...")
+    top_names, top_importances, _, _ = compute_feature_importance(
+        X, y, feature_names, groups, top_n=30
+    )
+
+    print("\nEn önemli 10 özellik:")
+    for i, (name, imp) in enumerate(zip(top_names[:10], top_importances[:10])):
+        print(f"  {i+1:2d}. {name:40s} {imp:.4f}")
+
+    plot_feature_importance(top_names, top_importances)
+    plot_importance_by_author(X, y, feature_names, groups)
+
 def run_all():
     run_download()
     run_train()
@@ -120,7 +152,7 @@ def main():
     )
     parser.add_argument(
         "--mode",
-        choices=["download", "train", "evaluate","tfidf","visualize", "all"],
+        choices=["download", "train", "evaluate","tfidf","visualize", "importance", "all"],
         required=True,
         help=(
             "download  → Kitapları indir\n"
@@ -143,7 +175,8 @@ def main():
         run_tfidf()
     elif args.mode == "visualize":
         run_visualize()
-
+    elif args.mode == "importance":
+        run_importance()
 
 if __name__ == "__main__":
     main()
