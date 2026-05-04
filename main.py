@@ -81,6 +81,32 @@ def run_tfidf():
     llm_dataset = load_llm_texts()
     evaluate_tfidf_llm(llm_dataset, pipeline, le)
 
+def run_visualize():
+    print("\n=== GÖRSELLEŞTİRME ===")
+    from src.preprocessing import load_author_texts
+    from src.features import build_feature_matrix
+    from src.llm_evaluation import load_llm_texts
+    from src.visualization import prepare_visualization_data, plot_pca, plot_tsne
+
+    print("Orijinal veri yükleniyor...")
+    original_dataset = load_author_texts()
+
+    print("LLM verisi yükleniyor...")
+    llm_dataset = load_llm_texts()
+
+    print("Özellik isimleri çıkarılıyor...")
+    chunks_and_labels = [(d[0], d[1]) for d in original_dataset]
+    _, _, feature_names = build_feature_matrix(chunks_and_labels)
+
+    print("Görselleştirme verisi hazırlanıyor...")
+    X, authors, sources = prepare_visualization_data(
+        original_dataset, llm_dataset, feature_names
+    )
+
+    print(f"Toplam nokta: {len(authors)}")
+    plot_pca(X, authors, sources)
+    plot_tsne(X, authors, sources)
+
 def run_all():
     run_download()
     run_train()
@@ -94,7 +120,7 @@ def main():
     )
     parser.add_argument(
         "--mode",
-        choices=["download", "train", "evaluate","tfidf", "all"],
+        choices=["download", "train", "evaluate","tfidf","visualize", "all"],
         required=True,
         help=(
             "download  → Kitapları indir\n"
@@ -115,6 +141,8 @@ def main():
         run_all()
     elif args.mode == "tfidf":
         run_tfidf()
+    elif args.mode == "visualize":
+        run_visualize()
 
 
 if __name__ == "__main__":
