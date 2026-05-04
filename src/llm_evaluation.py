@@ -6,12 +6,11 @@ from src.preprocessing import clean_text, split_into_chunks
 from src.features import build_feature_matrix, extract_features
 
 
-def load_llm_texts(llm_dir="data/llm_generated"):
+def load_llm_texts(llm_dir="data/llm_generated", include_controlled=True):
     """
-    data/llm_generated/gpt/ ve data/llm_generated/claude/ altındaki
-    metinleri yükler.
+    data/llm_generated/ altındaki tüm LLM metinlerini yükler.
+    gpt/, claude/, gpt_controlled/, claude_controlled/ klasörlerini okur.
     Döndürür: [(chunk, yazar, kaynak), ...] listesi
-    kaynak: 'gpt' veya 'claude'
     """
     dataset = []
 
@@ -19,6 +18,10 @@ def load_llm_texts(llm_dir="data/llm_generated"):
         source_path = os.path.join(llm_dir, source)
 
         if not os.path.isdir(source_path):
+            continue
+
+        # Kontrollü klasörleri filtrele
+        if "controlled" in source and not include_controlled:
             continue
 
         for author in os.listdir(source_path):
