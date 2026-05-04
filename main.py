@@ -168,6 +168,34 @@ def run_ensemble():
         top_indices, le, feature_names
     )
 
+def run_humanvsllm():
+    print("\n=== HUMAN vs LLM SINIFLANDIRMASI ===")
+    from src.preprocessing import load_author_texts
+    from src.llm_evaluation import load_llm_texts
+    from src.human_vs_llm import (
+        build_human_vs_llm_dataset,
+        train_human_vs_llm,
+        plot_confusion_matrix_hvl,
+        analyze_by_source
+    )
+
+    print("Veri yükleniyor...")
+    original_dataset = load_author_texts()
+    llm_dataset = load_llm_texts()
+
+    print("\nDataset hazırlanıyor...")
+    texts, labels, sources = build_human_vs_llm_dataset(
+        original_dataset, llm_dataset
+    )
+
+    print("\nModel eğitiliyor...")
+    pipeline, best_name, results, X_test, y_test = train_human_vs_llm(
+        texts, labels
+    )
+
+    plot_confusion_matrix_hvl(pipeline, X_test, y_test)
+    analyze_by_source(pipeline, llm_dataset)
+
 def run_all():
     run_download()
     run_train()
@@ -181,7 +209,7 @@ def main():
     )
     parser.add_argument(
         "--mode",
-        choices=["download", "train", "evaluate","tfidf","visualize", "importance", "ensemble", "all"],
+        choices=["download", "train", "evaluate","tfidf","visualize", "importance", "ensemble", "humanvsllm", "all"],
         required=True,
         help=(
             "download  → Kitapları indir\n"
@@ -208,6 +236,8 @@ def main():
         run_importance()
     elif args.mode == "ensemble":
         run_ensemble()
+    elif args.mode == "humanvsllm":
+        run_humanvsllm()
 
 if __name__ == "__main__":
     main()
