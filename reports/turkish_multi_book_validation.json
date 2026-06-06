@@ -1,0 +1,1530 @@
+{
+  "split_count": 20,
+  "skipped_split_count": 40,
+  "mean_accuracy": 0.9048686098043683,
+  "std_accuracy": 0.0933566727879393,
+  "min_accuracy": 0.7368421052631579,
+  "max_accuracy": 1.0,
+  "rows": [
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 64,
+        "sabahattin_ali": 98
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "bomba.txt",
+        "sabahattin_ali": "degirmen.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 64,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "bomba.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 64,
+        "sabahattin_ali": 95
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "bomba.txt",
+        "sabahattin_ali": "ses.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 69,
+        "sabahattin_ali": 98
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "diyet.txt",
+        "sabahattin_ali": "degirmen.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 69,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "diyet.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 69,
+        "sabahattin_ali": 95
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "diyet.txt",
+        "sabahattin_ali": "ses.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 72,
+        "sabahattin_ali": 98
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "falaka.txt",
+        "sabahattin_ali": "degirmen.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 72,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "falaka.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 72,
+        "sabahattin_ali": 95
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "falaka.txt",
+        "sabahattin_ali": "ses.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 70,
+        "sabahattin_ali": 98
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "forsa.txt",
+        "sabahattin_ali": "degirmen.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 70,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "forsa.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 70,
+        "sabahattin_ali": 95
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "forsa.txt",
+        "sabahattin_ali": "ses.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 71,
+        "sabahattin_ali": 98
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "kasagi.txt",
+        "sabahattin_ali": "degirmen.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 71,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "kasagi.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 71,
+        "sabahattin_ali": 95
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "kasagi.txt",
+        "sabahattin_ali": "ses.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 65,
+        "sabahattin_ali": 98
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "pembe_incili_kagftan.txt",
+        "sabahattin_ali": "degirmen.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 65,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "pembe_incili_kagftan.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 65,
+        "sabahattin_ali": 95
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "pembe_incili_kagftan.txt",
+        "sabahattin_ali": "ses.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 69,
+        "sabahattin_ali": 98
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "perili_kosk.txt",
+        "sabahattin_ali": "degirmen.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 69,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "perili_kosk.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 69,
+        "sabahattin_ali": 95
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "perili_kosk.txt",
+        "sabahattin_ali": "ses.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 67,
+        "sabahattin_ali": 98
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "primo_turk_cocugu.txt",
+        "sabahattin_ali": "degirmen.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 67,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "primo_turk_cocugu.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 67,
+        "sabahattin_ali": 95
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "primo_turk_cocugu.txt",
+        "sabahattin_ali": "ses.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 47,
+        "sabahattin_ali": 98
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "yalniz_efe.txt",
+        "sabahattin_ali": "degirmen.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 47,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "yalniz_efe.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 47,
+        "sabahattin_ali": 95
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "yalniz_efe.txt",
+        "sabahattin_ali": "ses.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 72,
+        "sabahattin_ali": 98
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "yuz_aki.txt",
+        "sabahattin_ali": "degirmen.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 72,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "yuz_aki.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 72,
+        "sabahattin_ali": 95
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "falaka.txt",
+        "omer_seyfettin": "yuz_aki.txt",
+        "sabahattin_ali": "ses.txt"
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.88,
+      "train_size": 192,
+      "test_size": 25,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 10,
+        "sabahattin_ali": 7
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "bomba.txt",
+        "sabahattin_ali": "degirmen.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "bomba.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "degirmen.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 78,
+        "omer_seyfettin": 64,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "bomba.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 1.0,
+      "train_size": 192,
+      "test_size": 28,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 10,
+        "sabahattin_ali": 10
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "bomba.txt",
+        "sabahattin_ali": "ses.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "bomba.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "ses.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.8,
+      "train_size": 207,
+      "test_size": 20,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 5,
+        "sabahattin_ali": 7
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "diyet.txt",
+        "sabahattin_ali": "degirmen.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "diyet.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "degirmen.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 78,
+        "omer_seyfettin": 69,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "diyet.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 1.0,
+      "train_size": 207,
+      "test_size": 23,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 5,
+        "sabahattin_ali": 10
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "diyet.txt",
+        "sabahattin_ali": "ses.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "diyet.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "ses.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.7647058823529411,
+      "train_size": 216,
+      "test_size": 17,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 2,
+        "sabahattin_ali": 7
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "falaka.txt",
+        "sabahattin_ali": "degirmen.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "falaka.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "degirmen.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 78,
+        "omer_seyfettin": 72,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "falaka.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.9,
+      "train_size": 216,
+      "test_size": 20,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 2,
+        "sabahattin_ali": 10
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "falaka.txt",
+        "sabahattin_ali": "ses.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "falaka.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "ses.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.7368421052631579,
+      "train_size": 210,
+      "test_size": 19,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 4,
+        "sabahattin_ali": 7
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "forsa.txt",
+        "sabahattin_ali": "degirmen.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "forsa.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "degirmen.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 78,
+        "omer_seyfettin": 70,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "forsa.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.9545454545454546,
+      "train_size": 210,
+      "test_size": 22,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 4,
+        "sabahattin_ali": 10
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "forsa.txt",
+        "sabahattin_ali": "ses.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "forsa.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "ses.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.7777777777777778,
+      "train_size": 213,
+      "test_size": 18,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 3,
+        "sabahattin_ali": 7
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "kasagi.txt",
+        "sabahattin_ali": "degirmen.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "kasagi.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "degirmen.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 78,
+        "omer_seyfettin": 71,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "kasagi.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 1.0,
+      "train_size": 213,
+      "test_size": 21,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 3,
+        "sabahattin_ali": 10
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "kasagi.txt",
+        "sabahattin_ali": "ses.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "kasagi.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "ses.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.875,
+      "train_size": 195,
+      "test_size": 24,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 9,
+        "sabahattin_ali": 7
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "pembe_incili_kagftan.txt",
+        "sabahattin_ali": "degirmen.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "pembe_incili_kagftan.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "degirmen.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 78,
+        "omer_seyfettin": 65,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "pembe_incili_kagftan.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 1.0,
+      "train_size": 195,
+      "test_size": 27,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 9,
+        "sabahattin_ali": 10
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "pembe_incili_kagftan.txt",
+        "sabahattin_ali": "ses.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "pembe_incili_kagftan.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "ses.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.85,
+      "train_size": 207,
+      "test_size": 20,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 5,
+        "sabahattin_ali": 7
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "perili_kosk.txt",
+        "sabahattin_ali": "degirmen.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "perili_kosk.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "degirmen.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 78,
+        "omer_seyfettin": 69,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "perili_kosk.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 1.0,
+      "train_size": 207,
+      "test_size": 23,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 5,
+        "sabahattin_ali": 10
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "perili_kosk.txt",
+        "sabahattin_ali": "ses.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "perili_kosk.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "ses.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.8636363636363636,
+      "train_size": 201,
+      "test_size": 22,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 7,
+        "sabahattin_ali": 7
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "primo_turk_cocugu.txt",
+        "sabahattin_ali": "degirmen.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "primo_turk_cocugu.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "degirmen.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 78,
+        "omer_seyfettin": 67,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "primo_turk_cocugu.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 1.0,
+      "train_size": 201,
+      "test_size": 25,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 7,
+        "sabahattin_ali": 10
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "primo_turk_cocugu.txt",
+        "sabahattin_ali": "ses.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "primo_turk_cocugu.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "ses.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.9523809523809523,
+      "train_size": 141,
+      "test_size": 42,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 27,
+        "sabahattin_ali": 7
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "yalniz_efe.txt",
+        "sabahattin_ali": "degirmen.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "yalniz_efe.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "degirmen.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 78,
+        "omer_seyfettin": 47,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "yalniz_efe.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.9777777777777777,
+      "train_size": 141,
+      "test_size": 45,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 27,
+        "sabahattin_ali": 10
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "yalniz_efe.txt",
+        "sabahattin_ali": "ses.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "yalniz_efe.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "ses.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 0.7647058823529411,
+      "train_size": 216,
+      "test_size": 17,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 2,
+        "sabahattin_ali": 7
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "yuz_aki.txt",
+        "sabahattin_ali": "degirmen.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "yuz_aki.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "degirmen.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    },
+    {
+      "skipped": true,
+      "reason": "Yetersiz train verisi",
+      "train_distribution": {
+        "ahmet_rasim": 78,
+        "omer_seyfettin": 72,
+        "sabahattin_ali": 17
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "yuz_aki.txt",
+        "sabahattin_ali": "kurk_mantolu_madonna.txt"
+      }
+    },
+    {
+      "skipped": false,
+      "accuracy": 1.0,
+      "train_size": 216,
+      "test_size": 20,
+      "test_distribution": {
+        "ahmet_rasim": 8,
+        "omer_seyfettin": 2,
+        "sabahattin_ali": 10
+      },
+      "selected_test_books": {
+        "ahmet_rasim": "gecelerim.txt",
+        "omer_seyfettin": "yuz_aki.txt",
+        "sabahattin_ali": "ses.txt"
+      },
+      "split_info": {
+        "ahmet_rasim": {
+          "test_book": "gecelerim.txt",
+          "books": {
+            "falaka.txt": 78,
+            "gecelerim.txt": 8
+          }
+        },
+        "omer_seyfettin": {
+          "test_book": "yuz_aki.txt",
+          "books": {
+            "bomba.txt": 10,
+            "diyet.txt": 5,
+            "falaka.txt": 2,
+            "forsa.txt": 4,
+            "kasagi.txt": 3,
+            "pembe_incili_kagftan.txt": 9,
+            "perili_kosk.txt": 5,
+            "primo_turk_cocugu.txt": 7,
+            "yalniz_efe.txt": 27,
+            "yuz_aki.txt": 2
+          }
+        },
+        "sabahattin_ali": {
+          "test_book": "ses.txt",
+          "books": {
+            "degirmen.txt": 7,
+            "kurk_mantolu_madonna.txt": 88,
+            "ses.txt": 10
+          }
+        }
+      }
+    }
+  ]
+}
