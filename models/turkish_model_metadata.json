@@ -1,0 +1,103 @@
+{
+  "model": "FeatureUnion(char_wb 4-6gram TF-IDF + word 1-3gram TF-IDF) + LinearSVC",
+  "purpose": "Streamlit app production model for 90-180 word Turkish paragraphs",
+  "random_state": 42,
+  "min_words": 100,
+  "max_words": 200,
+  "classes": [
+    "ahmet_rasim",
+    "omer_seyfettin",
+    "sabahattin_ali"
+  ],
+  "valid_authors": [
+    "ahmet_rasim",
+    "omer_seyfettin",
+    "sabahattin_ali"
+  ],
+  "excluded_authors": [
+    "huseyin_rahmi"
+  ],
+  "books_by_author": {
+    "ahmet_rasim": [
+      "falaka.txt",
+      "gecelerim.txt"
+    ],
+    "huseyin_rahmi": [
+      "sipsevdi.txt"
+    ],
+    "omer_seyfettin": [
+      "bomba.txt",
+      "diyet.txt",
+      "falaka.txt",
+      "forsa.txt",
+      "kasagi.txt",
+      "pembe_incili_kagftan.txt",
+      "perili_kosk.txt",
+      "primo_turk_cocugu.txt",
+      "yalniz_efe.txt",
+      "yuz_aki.txt"
+    ],
+    "sabahattin_ali": [
+      "degirmen.txt",
+      "kurk_mantolu_madonna.txt",
+      "ses.txt"
+    ]
+  },
+  "validation": {
+    "accuracy": 1.0,
+    "train_size": 192,
+    "test_size": 28,
+    "train_distribution": {
+      "sabahattin_ali": 64,
+      "ahmet_rasim": 64,
+      "omer_seyfettin": 64
+    },
+    "test_distribution": {
+      "ahmet_rasim": 8,
+      "omer_seyfettin": 10,
+      "sabahattin_ali": 10
+    },
+    "split_info": {
+      "ahmet_rasim": {
+        "test_book": "gecelerim.txt",
+        "books": {
+          "falaka.txt": 78,
+          "gecelerim.txt": 8
+        }
+      },
+      "omer_seyfettin": {
+        "test_book": "bomba.txt",
+        "books": {
+          "bomba.txt": 10,
+          "diyet.txt": 5,
+          "falaka.txt": 2,
+          "forsa.txt": 4,
+          "kasagi.txt": 3,
+          "pembe_incili_kagftan.txt": 9,
+          "perili_kosk.txt": 5,
+          "primo_turk_cocugu.txt": 7,
+          "yalniz_efe.txt": 27,
+          "yuz_aki.txt": 2
+        }
+      },
+      "sabahattin_ali": {
+        "test_book": "ses.txt",
+        "books": {
+          "degirmen.txt": 7,
+          "kurk_mantolu_madonna.txt": 88,
+          "ses.txt": 10
+        }
+      }
+    },
+    "train_balance_target": 64
+  },
+  "production": {
+    "production_train_size": 222,
+    "production_distribution": {
+      "omer_seyfettin": 74,
+      "sabahattin_ali": 74,
+      "ahmet_rasim": 74
+    },
+    "production_balance_target": 74
+  }
+}
