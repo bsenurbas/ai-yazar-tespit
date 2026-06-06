@@ -1,871 +1,942 @@
-import csv
-import json
-import os
-import pickle
-import subprocess
-from pathlib import Path
-
-import matplotlib.pyplot as plt
-import numpy as np
 import streamlit as st
+import pickle
+import numpy as np
+import matplotlib.pyplot as plt
+import sys
+import os
+from nltk.tokenize import sent_tokenize
+from groq import Groq
+from dotenv import load_dotenv
 
-from src.turkish_features import extract_turkish_features
+load_dotenv()
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+from src.preprocessing import clean_text
+from src.features import extract_features
 
-BASE_DIR = Path(__file__).resolve().parent
-MODELS_DIR = BASE_DIR / "models"
-REPORTS_DIR = BASE_DIR / "reports"
-TURKISH_STYLE_PROFILE_PATH = REPORTS_DIR / "turkish_author_style_profiles.json"
-
-TURKISH_MODEL_PATH = MODELS_DIR / "turkish_tfidf_pipeline.pkl"
-TURKISH_ENCODER_PATH = MODELS_DIR / "turkish_label_encoder.pkl"
-FOREIGN_MODEL_PATH = MODELS_DIR / "tfidf_pipeline.pkl"
-FOREIGN_ENCODER_PATH = MODELS_DIR / "label_encoder.pkl"
-
-TURKISH_AUTHOR_DISPLAY = {
-    "ahmet_rasim": "Ahmet Rasim",
-    "omer_seyfettin": "Ömer Seyfettin",
-    "sabahattin_ali": "Sabahattin Ali",
-}
-
-FOREIGN_AUTHOR_DISPLAY = {
-    "doyle": "Arthur Conan Doyle",
-    "poe": "Edgar Allan Poe",
-    "wells": "H. G. Wells",
-}
-
-TURKISH_AUTHOR_COLORS = {
-    "ahmet_rasim": "#2f80ed",
-    "omer_seyfettin": "#27ae60",
-    "sabahattin_ali": "#c0392b",
-}
-
-FOREIGN_AUTHOR_COLORS = {
-    "doyle": "#2f80ed",
-    "poe": "#8e44ad",
-    "wells": "#f39c12",
-}
-
-AUTHOR_STYLE_PROMPTS = {
-    "ahmet_rasim": (
-        "gözlemci, canlı, mahalle ve sokak hayatına yakın, konuşma diline yakın, "
-        "hafif nükteli"
-    ),
-    "omer_seyfettin": (
-        "sade, akıcı, olay örgüsü belirgin, kısa cümleli ve canlı"
-    ),
-    "sabahattin_ali": (
-        "sade, içten, hüzünlü, insanın iç dünyasına ve toplumsal gerçekliğe yakın"
-    ),
-}
-
-TURKISH_AUTHOR_INFO = {
-    "ahmet_rasim": {
-        "title": "Ahmet Rasim",
-        "desc": "Şehir, mahalle ve gündelik hayat gözlemleri; konuşma diline yakın canlı anlatım.",
-    },
-    "omer_seyfettin": {
-        "title": "Ömer Seyfettin",
-        "desc": "Açık olay örgüsü, sade dil, kısa ve canlı cümlelerle ilerleyen hikaye yapısı.",
-    },
-    "sabahattin_ali": {
-        "title": "Sabahattin Ali",
-        "desc": "İçten, hüzünlü ve toplumsal gerçekliğe yakın insan odaklı anlatım.",
-    },
-}
-
-FOREIGN_AUTHOR_INFO = {
-    "doyle": {
-        "title": "Arthur Conan Doyle",
-        "desc": "Dedektif anlatısı, gözlem, olay çözümü ve mantıksal ilerleyişe yakın üslup.",
-    },
-    "poe": {
-        "title": "Edgar Allan Poe",
-        "desc": "Gotik atmosfer, psikolojik gerilim, karanlık imgeler ve yoğun iç ses.",
-    },
-    "wells": {
-        "title": "H. G. Wells",
-        "desc": "Bilimkurgu, toplumsal gözlem, fikir odaklı anlatım ve açıklayıcı ritim.",
-    },
-}
-
-AUTHOR_DISPLAY = TURKISH_AUTHOR_DISPLAY
-AUTHOR_COLORS = TURKISH_AUTHOR_COLORS
-AUTHOR_INFO = TURKISH_AUTHOR_INFO
-
-ENGLISH_STOPWORDS = {
-    "a", "an", "and", "are", "as", "at", "be", "but", "by", "for",
-    "from", "had", "has", "he", "her", "his", "i", "in", "is", "it",
-    "its", "not", "of", "on", "or", "she", "that", "the", "their",
-    "they", "this", "to", "was", "were", "with", "you",
-}
-
-OLLAMA_MODELS = {
-    "Turkish-LLM-7B Q4": "hf.co/ogulcanaydogan/Turkish-LLM-7B-Instruct-GGUF:Q4_K_M",
-    "Gemma3 4B": "gemma3:4b",
-}
-
-DEFAULT_TOPICS = [
-    "Akşam vakti küçük bir kasabaya gelen yabancı",
-    "Eski bir okul gününü hatırlayan anlatıcı",
-    "Yoksul bir mahallede geçen kısa bir karşılaşma",
-    "Uzun süredir beklenen bir mektubun gelişi",
-    "Kış sabahı istasyonda bekleyen bir kişi",
-]
-
-
+# ─── Sayfa Ayarları ───────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Türkçe Üslup Madenciliği",
-    page_icon="📚",
+    page_title="AI-Yazar Tespit Sistemi",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="expanded"
 )
 
-st.markdown(
-    """
-    <style>
-    .metric-card {
-        border: 1px solid #263244;
-        border-radius: 8px;
-        padding: 0.8rem 1rem;
-        background: #111827;
-        min-height: 82px;
-    }
-    .metric-value {
-        font-size: 1.35rem;
+# ─── CSS ──────────────────────────────────────────────────────────────────────
+st.markdown("""
+<style>
+    .app-title {
+        font-size: 2rem;
         font-weight: 700;
-        color: #e5e7eb;
-        line-height: 1.25;
+        color: #ffffff;
+        letter-spacing: -0.5px;
+        margin-bottom: 0.2rem;
     }
-    .metric-label {
-        color: #9ca3af;
-        font-size: 0.78rem;
-        margin-top: 0.25rem;
+    .app-subtitle {
+        font-size: 0.95rem;
+        color: #8b8d98;
+        margin-bottom: 2rem;
     }
     .result-box {
-        border-left: 4px solid #38bdf8;
-        background: #0f172a;
+        border-radius: 10px;
+        padding: 1.2rem 1.5rem;
+        margin: 1rem 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+    }
+    .result-human {
+        background: #0d2137;
+        border-left: 4px solid #2196F3;
+        color: #90caf9;
+    }
+    .result-llm {
+        background: #1a0d1a;
+        border-left: 4px solid #e040fb;
+        color: #ce93d8;
+    }
+    .result-author {
+        background: #0d2137;
+        border-left: 4px solid #00bcd4;
+        color: #80deea;
+    }
+    .stat-box {
+        background: #1e2130;
+        border: 1px solid #2d3250;
         border-radius: 8px;
-        padding: 1rem 1.2rem;
-        margin: 0.75rem 0;
+        padding: 0.8rem 1rem;
+        text-align: center;
+        margin-bottom: 0.5rem;
     }
-    .small-note {
-        color: #9ca3af;
-        font-size: 0.85rem;
+    .stat-value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #4a90d9;
     }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-
-@st.cache_resource
-def load_author_model(model_path, encoder_path):
-    with Path(model_path).open("rb") as f:
-        pipeline = pickle.load(f)
-    with Path(encoder_path).open("rb") as f:
-        label_encoder = pickle.load(f)
-    return pipeline, label_encoder
-
-@st.cache_data
-def load_turkish_style_profiles():
-    if not TURKISH_STYLE_PROFILE_PATH.exists():
-        return None
-
-    with TURKISH_STYLE_PROFILE_PATH.open("r", encoding="utf-8") as f:
-        return json.load(f)
-
-def word_count(text):
-    return len(text.split())
-
-
-def sentence_count(text):
-    marks = text.count(".") + text.count("!") + text.count("?")
-    return max(marks, 1)
-
-
-def predict_author(text, pipeline, label_encoder):
-    pred_id = pipeline.predict([text])[0]
-    if isinstance(pred_id, (int, np.integer)):
-        pred_author = str(label_encoder.classes_[pred_id])
-    else:
-        pred_author = str(pred_id)
-
-    scores = None
-    if hasattr(pipeline, "predict_proba"):
-        probs = np.atleast_1d(pipeline.predict_proba([text])[0])
-        scores = {
-            str(author): float(prob)
-            for author, prob in zip(label_encoder.classes_, probs)
-        }
-    elif hasattr(pipeline, "decision_function"):
-        raw = pipeline.decision_function([text])[0]
-        raw = np.atleast_1d(raw)
-        exp = np.exp(raw - raw.max())
-        probs = exp / exp.sum()
-        scores = {
-            str(author): float(prob)
-            for author, prob in zip(label_encoder.classes_, probs)
-        }
-
-    return pred_author, scores
-
-
-def ranked_author_scores(scores):
-    if not scores:
-        return []
-    return sorted(scores.items(), key=lambda item: item[1], reverse=True)
-
-def confidence_level(scores):
-    ranked = ranked_author_scores(scores)
-    if len(ranked) < 2:
-        return {
-            "label": "Belirsiz",
-            "margin": 0,
-            "top_score": 0,
-            "second_score": 0,
-            "second_author": None,
-        }
-
-    top_author, top_score = ranked[0]
-    second_author, second_score = ranked[1]
-    margin = top_score - second_score
-
-    if margin >= 0.15:
-        label = "Yüksek"
-    elif margin >= 0.08:
-        label = "Orta"
-    elif margin >= 0.04:
-        label = "Düşük"
-    else:
-        label = "Sınırda"
-
-    return {
-        "label": label,
-        "margin": margin,
-        "top_score": top_score,
-        "second_score": second_score,
-        "second_author": second_author,
+    .stat-label {
+        font-size: 0.78rem;
+        color: #8b8d98;
+        margin-top: 0.2rem;
     }
+</style>
+""", unsafe_allow_html=True)
 
-def confidence_note(scores):
-    info = confidence_level(scores)
-
-    if info["label"] == "Sınırda":
-        ranked = ranked_author_scores(scores)
-        top_author = ranked[0][0]
-        second_author = info["second_author"]
-
-        return (
-            "Skorlar birbirine çok yakın. Bu metin kesin bir yazar etiketi yerine "
-            f"{AUTHOR_DISPLAY.get(top_author, top_author)} ve "
-            f"{AUTHOR_DISPLAY.get(second_author, second_author)} arasında sınırda görünüyor."
-        )
-
-    if info["label"] == "Düşük":
-        second_author = info["second_author"]
-        return (
-            "Tahmin düşük güven düzeyinde. İkinci güçlü aday: "
-            f"{AUTHOR_DISPLAY.get(second_author, second_author)}."
-        )
-
-    if info["label"] == "Orta":
-        second_author = info["second_author"]
-        return (
-            "Tahmin orta güven düzeyinde. İkinci güçlü aday: "
-            f"{AUTHOR_DISPLAY.get(second_author, second_author)}."
-        )
-
-    return None
-
-
-def quality_flags(text, corpus_mode):
-    flags = []
-    lowered = text.lower()
-    wc = word_count(text)
-
-    if wc < 100:
-        flags.append("Metin 100 kelimeden kısa; yazar tahmini güvenilir olmayabilir.")
-    if any(term in lowered for term in ["görev:", "kurallar:", "açıklama", "özür", "yardımcı ol", "rules:", "sorry", "i cannot"]):
-        flags.append("Metin hikaye yerine açıklama/meta cevap içeriyor olabilir.")
-    if corpus_mode == "Türkçe" and any(name in text for name in ["Sarah", "Lila", "John", "Emily"]):
-        flags.append("Metinde yabancı karakter adı var; Türkçe edebi profil için zayıf sinyal olabilir.")
-    if "\x1b" in text or "�" in text or "anlams?z" in lowered:
-        flags.append("Metinde bozuk karakter veya terminal artığı var.")
-
-    return flags
-
-def repetition_ratio(text):
-    words = [
-        word.strip(".,!?;:'\"()[]-").lower()
-        for word in text.split()
-    ]
-    words = [word for word in words if word]
-
-    if len(words) < 2:
-        return 0
-
-    bigrams = list(zip(words, words[1:]))
-    if not bigrams:
-        return 0
-
-    repeated = len(bigrams) - len(set(bigrams))
-    return repeated / len(bigrams)
-
-
-def generation_quality_rows(text, target_author=None, predicted_author=None, corpus_mode="Türkçe"):
-    flags = quality_flags(text, corpus_mode)
-    wc = word_count(text)
-    rep = repetition_ratio(text)
-
-    rows = [
-        {
-            "Kontrol": "Kelime sayısı",
-            "Durum": "Geçti" if wc >= 100 else "Uyarı",
-            "Detay": f"{wc} kelime",
-        },
-        {
-            "Kontrol": "Meta/açıklama",
-            "Durum": "Uyarı" if any("meta" in flag or "açıklama" in flag for flag in flags) else "Geçti",
-            "Detay": "Açıklama/meta cevap tespit edildi" if any("meta" in flag or "açıklama" in flag for flag in flags) else "Hikaye formatında",
-        },
-        {
-            "Kontrol": "Bozuk karakter",
-            "Durum": "Uyarı" if any("bozuk" in flag.lower() for flag in flags) else "Geçti",
-            "Detay": "Bozuk karakter olabilir" if any("bozuk" in flag.lower() for flag in flags) else "Temiz",
-        },
-        {
-            "Kontrol": "Tekrar oranı",
-            "Durum": "Uyarı" if rep > 0.08 else "Geçti",
-            "Detay": f"{rep:.3f}",
-        },
-    ]
-
-    if target_author and predicted_author:
-        rows.append({
-            "Kontrol": "Hedef yazar eşleşmesi",
-            "Durum": "Geçti" if target_author == predicted_author else "Eşleşmedi",
-            "Detay": (
-                f"Hedef: {AUTHOR_DISPLAY.get(target_author, target_author)} | "
-                f"Tahmin: {AUTHOR_DISPLAY.get(predicted_author, predicted_author)}"
-            ),
-        })
-
-    return rows
-
-def metric_card(value, label):
-    return f"""
-    <div class="metric-card">
-        <div class="metric-value">{value}</div>
-        <div class="metric-label">{label}</div>
-    </div>
-    """
-
-def confidence_card(scores):
-    info = confidence_level(scores)
-    return metric_card(info["label"], "Güven Düzeyi")
-
-def english_features(text):
-    words = [word.lower() for word in text.split() if word.strip(".,!?;:'\"()[]-").isalpha()]
-    clean_words = [word.strip(".,!?;:'\"()[]-").lower() for word in text.split()]
-    clean_words = [word for word in clean_words if word.isalpha()]
-    stopword_count = sum(1 for word in clean_words if word in ENGLISH_STOPWORDS)
-    return {
-        "avg_word_length": float(np.mean([len(word) for word in clean_words])) if clean_words else 0,
-        "type_token_ratio": len(set(clean_words)) / len(clean_words) if clean_words else 0,
-        "stopword_ratio": stopword_count / len(clean_words) if clean_words else 0,
-        "comma_rate": text.count(",") / max(len(text), 1),
-        "semicolon_rate": text.count(";") / max(len(text), 1),
-        "word_count": len(words),
-    }
-
-
-def text_stats(text, corpus_mode):
-    features = extract_turkish_features(text) if corpus_mode == "Türkçe" else english_features(text)
-    wc = word_count(text)
-    sc = sentence_count(text)
-    stats = {
-        "Kelime": wc,
-        "Cümle": sc,
-        "Ort. Cümle": round(wc / max(sc, 1), 1),
-        "Ort. Kelime": round(features.get("avg_word_length", 0), 2),
-        "TTR": round(features.get("type_token_ratio", 0), 3),
-        "Stopword": round(features.get("stopword_ratio", 0), 3),
-        "Virgül": round(features.get("comma_rate", 0), 4),
-    }
-    if corpus_mode == "Türkçe":
-        stats["Fiil Eki"] = round(features.get("verb_suffix_ratio", 0), 3)
-    else:
-        stats["Noktalı Virgül"] = round(features.get("semicolon_rate", 0), 4)
-    return stats
-
-STYLE_FEATURE_LABELS = {
-    "avg_word_length": "Ort. kelime uzunluğu",
-    "avg_sentence_length": "Ort. cümle uzunluğu",
-    "type_token_ratio": "TTR",
-    "stopword_ratio": "Stopword oranı",
-    "verb_suffix_ratio": "Fiil eki oranı",
-    "comma_rate": "Virgül oranı",
+# ─── Yazar Profil Verileri ────────────────────────────────────────────────────
+AUTHOR_PROFILES_STYLOMETRY = {
+    "Poe": {
+        "avg_word_length": 5.2,
+        "avg_sentence_length": 28.5,
+        "type_token_ratio": 0.52,
+        "stopword_ratio": 0.48,
+        "comma_rate": 0.032,
+        "semicolon_rate": 0.008,
+        "question_rate": 0.004,
+        "exclamation_rate": 0.003,
+    },
+    "Doyle": {
+        "avg_word_length": 4.6,
+        "avg_sentence_length": 18.2,
+        "type_token_ratio": 0.58,
+        "stopword_ratio": 0.52,
+        "comma_rate": 0.022,
+        "semicolon_rate": 0.003,
+        "question_rate": 0.008,
+        "exclamation_rate": 0.002,
+    },
+    "Wells": {
+        "avg_word_length": 4.8,
+        "avg_sentence_length": 22.1,
+        "type_token_ratio": 0.55,
+        "stopword_ratio": 0.50,
+        "comma_rate": 0.025,
+        "semicolon_rate": 0.004,
+        "question_rate": 0.005,
+        "exclamation_rate": 0.001,
+    },
 }
 
-
-def closest_author_by_feature(value, profiles, feature_name):
-    distances = []
-
-    for author, profile in profiles["profiles"].items():
-        feature_stats = profile["features"].get(feature_name)
-        if not feature_stats:
-            continue
-
-        mean = feature_stats["mean"]
-        std = feature_stats["std"] or 1
-
-        z_distance = abs(value - mean) / std
-        distances.append((z_distance, author, mean))
-
-    if not distances:
-        return None
-
-    distances.sort(key=lambda item: item[0])
-    return distances[0]
-
-
-def style_similarity_rows(text):
-    profiles = load_turkish_style_profiles()
-    if not profiles:
-        return []
-
-    features = extract_turkish_features(text)
-    rows = []
-
-    for feature_name, label in STYLE_FEATURE_LABELS.items():
-        value = features.get(feature_name, 0)
-        closest = closest_author_by_feature(value, profiles, feature_name)
-
-        if not closest:
-            continue
-
-        distance, author, author_mean = closest
-        rows.append({
-            "Özellik": label,
-            "Metin Değeri": round(value, 4),
-            "En Yakın Yazar": AUTHOR_DISPLAY.get(author, author),
-            "Yazar Ort.": round(author_mean, 4),
-            "Uzaklık": round(distance, 3),
-        })
-
-    return rows
-
-def plot_scores(scores):
-    labels = [AUTHOR_DISPLAY.get(k, k) for k in scores]
-    values = [scores[k] for k in scores]
-    colors = [AUTHOR_COLORS.get(k, "#64748b") for k in scores]
-
-    fig, ax = plt.subplots(figsize=(7, 3), facecolor="#0b1120")
-    ax.set_facecolor("#111827")
-    ax.barh(labels, values, color=colors)
-    ax.set_xlim(0, max(values) * 1.15 if values else 1)
-    ax.tick_params(colors="#d1d5db")
-    ax.set_xlabel("Normalize karar skoru", color="#9ca3af")
-    for spine in ax.spines.values():
-        spine.set_color("#374151")
-    ax.grid(axis="x", color="#374151", alpha=0.35)
-    plt.tight_layout()
-    return fig
-
-
-def plot_features(stats):
-    keys = [key for key in ["Ort. Cümle", "Ort. Kelime", "TTR", "Stopword", "Fiil Eki", "Noktalı Virgül", "Virgül"] if key in stats]
-    values = [float(stats[k]) for k in keys]
-    max_value = max(values) if max(values) else 1
-    norm = [v / max_value for v in values]
-
-    fig, ax = plt.subplots(figsize=(7, 3.5), facecolor="#0b1120")
-    ax.set_facecolor("#111827")
-    ax.bar(keys, norm, color="#38bdf8")
-    ax.tick_params(colors="#d1d5db", labelrotation=20)
-    ax.set_ylabel("Normalize değer", color="#9ca3af")
-    for spine in ax.spines.values():
-        spine.set_color("#374151")
-    ax.grid(axis="y", color="#374151", alpha=0.35)
-    plt.tight_layout()
-    return fig
-
-
-def find_ollama_executable():
-    candidates = [
-        "ollama",
-        str(Path.home() / "AppData/Local/Programs/Ollama/ollama.exe"),
-        r"C:\Program Files\Ollama\ollama.exe",
-    ]
-    for candidate in candidates:
-        try:
-            result = subprocess.run(
-                [candidate, "--version"],
-                capture_output=True,
-                text=True,
-                timeout=5,
-            )
-            if result.returncode == 0:
-                return candidate
-        except Exception:
-            continue
-    return None
-
-
-def build_generation_prompt(author_key, topic, min_words, max_words):
-    style = AUTHOR_STYLE_PROMPTS[author_key]
-    return f"""Aşağıdaki görevi eksiksiz yerine getir.
-
-{min_words} ile {max_words} kelime arasında özgün bir Türkçe edebi hikaye yaz.
-
-Konu: {topic}.
-
-Üslup: {style}.
-
-Kurallar:
-- Kısa cevap verme.
-- Metin en az {min_words} kelime olmalı.
-- Açıklama, başlık, özür veya uyarı yazma.
-- Maddeleme yapma.
-- Yabancı karakter adı kullanma.
-- Sadece hikayeyi yaz.
-- Bozuk veya anlamsız kelime kullanma.
-"""
-
-
-def generate_with_ollama(model_name, prompt):
-    ollama = find_ollama_executable()
-    if not ollama:
-        raise RuntimeError("Ollama bulunamadı. Ollama kurulu ve PATH erişilebilir olmalı.")
-
-    result = subprocess.run(
-        [ollama, "run", model_name, prompt],
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        timeout=480,
-    )
-    if result.returncode != 0:
-        raise RuntimeError(result.stderr.strip() or "Ollama üretimi başarısız oldu.")
-    return result.stdout.strip()
-
-
-def read_experiment_results(path):
-    if not path.exists():
-        return []
-    with path.open("r", encoding="utf-8") as f:
-        return list(csv.DictReader(f))
-
-
-with st.sidebar:
-    st.title("Üslup Madenciliği")
-    st.caption("Yazar tahmini, yerel üretim ve stilometrik analiz")
-    st.divider()
-
-    corpus_mode = st.radio(
-        "Yazar Grubu",
-        ["Türkçe", "Yabancı"],
-        horizontal=True,
-    )
-
-    page = st.radio(
-        "Sayfa",
-        [
-            "Yazar Tahmini",
-            "Stilometrik Analiz",
-            "Yerel Üretim",
-            "Deney Sonuçları",
+AUTHOR_PROFILES_INFO = {
+    "Edgar Allan Poe": {
+        "dates": "1809 — 1849",
+        "style": "Gotik atmosfer, psikolojik gerilim",
+        "features": [
+            "Uzun, karmasik cumleler",
+            "Dramatik noktalama",
+            "Arkaik kelime dagarcigi",
+            "Birinci sahis anlati",
         ],
+        "color": "#5A07B9",
+        "works": "The Raven, Tales of Mystery",
+        "key": "poe",
+    },
+    "Arthur Conan Doyle": {
+        "dates": "1859 — 1930",
+        "style": "Analitik anlati, dedektif kurgu",
+        "features": [
+            "Diyalog agirlikli yapi",
+            "Metodolojik muhakeme",
+            "Victorian Ingilizce",
+            "Watson anlatisi",
+        ],
+        "color": "#2196F3",
+        "works": "Sherlock Holmes Serisi",
+        "key": "doyle",
+    },
+    "H.G. Wells": {
+        "dates": "1866 — 1946",
+        "style": "Bilimsel spekulasyon, sosyal elestiri",
+        "features": [
+            "Gazetecilik tonu",
+            "Nesnel anlati",
+            "Bilim kurgu temalari",
+            "Sosyal yorum",
+        ],
+        "color": "#4CAF50",
+        "works": "The Time Machine, War of the Worlds",
+        "key": "wells",
+    },
+}
+
+AUTHOR_DISPLAY = {
+    "poe": "Edgar Allan Poe",
+    "doyle": "Arthur Conan Doyle",
+    "wells": "H.G. Wells",
+}
+
+AUTHOR_COLORS = {
+    "poe": "#F44336",
+    "doyle": "#2196F3",
+    "wells": "#4CAF50",
+}
+
+# ─── Model Yükleme ────────────────────────────────────────────────────────────
+@st.cache_resource
+def load_models():
+    models = {}
+    with open("models/tfidf_pipeline.pkl", "rb") as f:
+        models["tfidf"] = pickle.load(f)
+    with open("models/tfidf_label_encoder.pkl", "rb") as f:
+        models["tfidf_le"] = pickle.load(f)
+    with open("models/human_vs_llm.pkl", "rb") as f:
+        models["hvl"] = pickle.load(f)
+    return models
+
+
+# ─── Yardımcı Fonksiyonlar ────────────────────────────────────────────────────
+def predict_author(text, models):
+    pipeline = models["tfidf"]
+    le = models["tfidf_le"]
+    pred = pipeline.predict([text])[0]
+    author = str(le.classes_[pred])
+    scores = pipeline.decision_function([text])[0]
+    probs = np.exp(scores) / np.exp(scores).sum()
+    return author, dict(zip([str(c) for c in le.classes_], probs))
+
+
+def predict_human_vs_llm(text, models):
+    pipeline = models["hvl"]
+    pred = pipeline.predict([text])[0]
+    try:
+        proba = pipeline.predict_proba([text])[0]
+        prob_dict = dict(zip(pipeline.classes_, proba))
+        llm_prob = prob_dict.get("llm", 0.5)
+    except Exception:
+        llm_prob = 1.0 if pred == "llm" else 0.0
+    return pred, llm_prob
+
+
+def get_text_stats(text):
+    words = text.split()
+    try:
+        sentences = sent_tokenize(text)
+        sent_count = len(sentences)
+    except Exception:
+        sent_count = text.count(".") + text.count("!") + text.count("?")
+    unique_words = len(set(w.lower() for w in words))
+    avg_sent_len = len(words) / max(sent_count, 1)
+    return {
+        "Kelime Sayisi": len(words),
+        "Cumle Sayisi": sent_count,
+        "Benzersiz Kelime": unique_words,
+        "Ort. Cumle Uzunlugu": round(avg_sent_len, 1),
+    }
+
+
+def get_stylometric_features(text):
+    feat = extract_features(text)
+    return {
+        "avg_word_length": round(feat.get("avg_word_length", 0), 2),
+        "avg_sentence_length": round(feat.get("avg_sentence_length", 0), 2),
+        "type_token_ratio": round(feat.get("type_token_ratio", 0), 3),
+        "stopword_ratio": round(feat.get("stopword_ratio", 0), 3),
+        "comma_rate": round(feat.get("comma_rate", 0), 4),
+        "semicolon_rate": round(feat.get("semicolon_rate", 0), 4),
+        "question_rate": round(feat.get("question_rate", 0), 4),
+        "exclamation_rate": round(feat.get("exclamation_rate", 0), 4),
+    }
+
+
+def plot_radar(features, author_key):
+    labels = [
+        "Kelime Uzunlugu", "Cumle Uzunlugu", "TTR",
+        "Stopword", "Virgul", "Noktali Virgul"
+    ]
+    feat_keys = [
+        "avg_word_length", "avg_sentence_length", "type_token_ratio",
+        "stopword_ratio", "comma_rate", "semicolon_rate"
+    ]
+    max_vals = {
+        "avg_word_length": 8.0, "avg_sentence_length": 50.0,
+        "type_token_ratio": 1.0, "stopword_ratio": 1.0,
+        "comma_rate": 0.06, "semicolon_rate": 0.02,
+    }
+
+    author_profile_key = author_key.capitalize()
+    if author_profile_key not in AUTHOR_PROFILES_STYLOMETRY:
+        author_profile_key = "Poe"
+
+    ref = AUTHOR_PROFILES_STYLOMETRY[author_profile_key]
+
+    text_vals = [min(features.get(k, 0) / max_vals[k], 1.0) for k in feat_keys]
+    ref_vals = [min(ref.get(k, 0) / max_vals[k], 1.0) for k in feat_keys]
+
+    N = len(labels)
+    angles = [n / float(N) * 2 * np.pi for n in range(N)]
+    angles += angles[:1]
+    text_vals += text_vals[:1]
+    ref_vals += ref_vals[:1]
+
+    fig, ax = plt.subplots(figsize=(5, 5),
+                           subplot_kw=dict(polar=True),
+                           facecolor="#0f1117")
+    ax.set_facecolor("#1e2130")
+
+    ax.plot(angles, ref_vals, "o-", linewidth=1.5,
+            color="#4a90d9", label=f"{author_profile_key} Profili", alpha=0.7)
+    ax.fill(angles, ref_vals, alpha=0.15, color="#4a90d9")
+    ax.plot(angles, text_vals, "o-", linewidth=2,
+            color="#00e5ff", label="Analiz Edilen Metin")
+    ax.fill(angles, text_vals, alpha=0.25, color="#00e5ff")
+
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(labels, size=8, color="#8b8d98")
+    ax.set_yticks([0.25, 0.5, 0.75, 1.0])
+    ax.set_yticklabels(["25%", "50%", "75%", "100%"], size=6, color="#555")
+    ax.tick_params(colors="#555")
+    ax.spines["polar"].set_color("#2d3250")
+    ax.grid(color="#2d3250", linewidth=0.5)
+    ax.legend(loc="upper right", bbox_to_anchor=(1.3, 1.1),
+              fontsize=8, facecolor="#1e2130", labelcolor="#ccc",
+              edgecolor="#2d3250")
+    plt.tight_layout()
+    return fig
+
+
+def plot_feature_bars(features):
+    feat_labels = {
+        "avg_word_length": "Ort. Kelime Uzunlugu",
+        "avg_sentence_length": "Ort. Cumle Uzunlugu",
+        "type_token_ratio": "TTR",
+        "stopword_ratio": "Stopword Orani",
+        "comma_rate": "Virgul Orani",
+        "semicolon_rate": "Noktali Virgul Orani",
+        "question_rate": "Soru Isareti Orani",
+        "exclamation_rate": "Unlem Orani",
+    }
+    keys = list(feat_labels.keys())
+    labels = [feat_labels[k] for k in keys]
+    values = [features.get(k, 0) for k in keys]
+    max_v = max(values) if max(values) > 0 else 1
+    norm_values = [v / max_v for v in values]
+
+    fig, ax = plt.subplots(figsize=(6, 4), facecolor="#0f1117")
+    ax.set_facecolor("#1e2130")
+    colors = ["#4a90d9" if v > 0.5 else "#2d5a8e" for v in norm_values]
+    bars = ax.barh(labels, norm_values, color=colors,
+                   edgecolor="#0f1117", linewidth=0.5)
+    for bar, val in zip(bars, values):
+        ax.text(bar.get_width() + 0.01, bar.get_y() + bar.get_height()/2,
+                f"{val:.4f}", va="center", ha="left",
+                fontsize=7, color="#8b8d98")
+    ax.set_xlim(0, 1.2)
+    ax.set_xlabel("Normalize Deger", color="#8b8d98", fontsize=8)
+    ax.tick_params(colors="#8b8d98", labelsize=8)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["bottom"].set_color("#2d3250")
+    ax.spines["left"].set_color("#2d3250")
+    ax.grid(axis="x", color="#2d3250", linewidth=0.5, alpha=0.5)
+    plt.tight_layout()
+    return fig
+
+
+def plot_gauge(prob, label):
+    fig, ax = plt.subplots(figsize=(4, 2.5),
+                           subplot_kw=dict(aspect="equal"),
+                           facecolor="#0f1117")
+    ax.set_facecolor("#0f1117")
+    theta = np.linspace(np.pi, 0, 100)
+    ax.plot(np.cos(theta), np.sin(theta),
+            color="#2d3250", linewidth=15, solid_capstyle="round")
+    theta_val = np.linspace(np.pi, np.pi - prob * np.pi, 100)
+    color = "#e040fb" if prob > 0.5 else "#2196F3"
+    ax.plot(np.cos(theta_val), np.sin(theta_val),
+            color=color, linewidth=15, solid_capstyle="round")
+    ax.text(0, -0.3, f"{prob:.0%}", ha="center", va="center",
+            fontsize=20, fontweight="bold", color="white")
+    ax.text(0, -0.6, label, ha="center", va="center",
+            fontsize=9, color="#8b8d98")
+    ax.set_xlim(-1.2, 1.2)
+    ax.set_ylim(-0.8, 1.2)
+    ax.axis("off")
+    plt.tight_layout()
+    return fig
+
+
+def render_stat_box(value, label, font_size="1.6rem"):
+    return f"""
+    <div class='stat-box'>
+        <div class='stat-value' style='font-size:{font_size};'>{value}</div>
+        <div class='stat-label'>{label}</div>
+    </div>"""
+
+# ─── Sidebar ──────────────────────────────────────────────────────────────────
+with st.sidebar:
+    st.markdown("## AI-Yazar")
+    st.markdown("*Stilometri Tabanlı LLM Tespit Sistemi*")
+    st.divider()
+
+    st.markdown("### Navigasyon")
+    page = st.radio(
+        "",
+        [
+            "Yazar Tespiti",
+            "Human vs LLM",
+            "Stilometrik Analiz",
+            "Karsilastirma Modu",
+            "Stil Uretici",
+        ],
+        label_visibility="collapsed"
     )
 
     st.divider()
-    st.subheader("Yazar Profilleri")
+    st.markdown("### Yazar Profilleri")
 
-    if corpus_mode == "Türkçe":
-        AUTHOR_DISPLAY = TURKISH_AUTHOR_DISPLAY
-        AUTHOR_COLORS = TURKISH_AUTHOR_COLORS
-        AUTHOR_INFO = TURKISH_AUTHOR_INFO
-        model_path = TURKISH_MODEL_PATH
-        encoder_path = TURKISH_ENCODER_PATH
-    else:
-        AUTHOR_DISPLAY = FOREIGN_AUTHOR_DISPLAY
-        AUTHOR_COLORS = FOREIGN_AUTHOR_COLORS
-        AUTHOR_INFO = FOREIGN_AUTHOR_INFO
-        model_path = FOREIGN_MODEL_PATH
-        encoder_path = FOREIGN_ENCODER_PATH
+    for author, info in AUTHOR_PROFILES_INFO.items():
+        with st.expander(author):
+            features_html = "".join([
+                f"<div style='font-size:0.78rem; color:#8b8d98; "
+                f"padding:0.15rem 0;'>· {f}</div>"
+                for f in info["features"]
+            ])
+            st.markdown(f"""
+            <div style='border-left: 3px solid {info["color"]};
+                        padding-left: 0.8rem; padding-top: 0.3rem;'>
+                <div style='font-size:0.75rem; color:#666;
+                     margin-bottom:0.3rem;'>{info["dates"]}</div>
+                <div style='font-size:0.82rem; color:#bbb;
+                     margin-bottom:0.5rem; font-style:italic;'>
+                    {info["style"]}</div>
+                {features_html}
+                <div style='font-size:0.72rem; color:#555;
+                     margin-top:0.6rem;'>{info["works"]}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-    for key, info in AUTHOR_INFO.items():
-        with st.expander(info["title"]):
-            st.write(info["desc"])
+    st.divider()
+    st.markdown("""
+    <div style='font-size:0.75rem; color:#555; text-align:center;'>
+    YZM426 Metin Madenciligi<br>Buse Nur Baş
+    </div>
+    """, unsafe_allow_html=True)
 
-
+# ─── Model Yükleme ────────────────────────────────────────────────────────────
 try:
-    pipeline, label_encoder = load_author_model(str(model_path), str(encoder_path))
-except Exception as exc:
-    st.error(f"{corpus_mode} model yüklenemedi: {exc}")
+    models = load_models()
+except Exception as e:
+    st.error(f"Model yuklenemedi: {e}")
     st.stop()
 
+# ─── SAYFA: Yazar Tespiti ─────────────────────────────────────────────────────
+if page == "Yazar Tespiti":
+    st.markdown("<div class='app-title'>Yazar Tespiti</div>",
+                unsafe_allow_html=True)
+    st.markdown("<div class='app-subtitle'>Metni girin — Poe, Doyle veya Wells'e ait olup olmadığını tespit edin.</div>",
+                unsafe_allow_html=True)
 
-if page == "Yazar Tahmini":
-    st.title("Yazar Tahmini")
-    st.write(f"Bir {corpus_mode.lower()} metin girin; sistem metnin hangi yazara daha yakın olduğunu tahmin eder.")
-
-    placeholder = "Analiz edilecek Türkçe metni buraya yapıştırın..." if corpus_mode == "Türkçe" else "Paste the English text to analyze here..."
-    text = st.text_area("Metin", height=260, placeholder=placeholder)
-    if st.button("Tahmin Et", type="primary"):
-        if not text.strip():
-            st.warning("Lütfen metin girin.")
-        else:
-            pred, scores = predict_author(text, pipeline, label_encoder)
-            flags = quality_flags(text, corpus_mode)
-            stats = text_stats(text, corpus_mode)
-
-            st.markdown(
-                f"""
-                <div class="result-box">
-                    <div class="metric-label">Tahmin Edilen Yazar</div>
-                    <div class="metric-value">{AUTHOR_DISPLAY.get(pred, pred)}</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-            if flags:
-                for flag in flags:
-                    st.warning(flag)
-
-            note = confidence_note(scores)
-            if note:
-                st.info(note)
-
-            display_stats = {"Güven": confidence_level(scores)["label"]}
-            display_stats.update(stats)
-
-            cols = st.columns(4)
-            for idx, (label, value) in enumerate(display_stats.items()):
-                with cols[idx % 4]:
-                    st.markdown(metric_card(value, label), unsafe_allow_html=True)
-
-            if scores:
-                st.subheader("Karar Skorları")
-                fig = plot_scores(scores)
-                st.pyplot(fig, use_container_width=True)
-                plt.close(fig)
-            
-            if corpus_mode == "Türkçe":
-                rows = style_similarity_rows(text)
-                if rows:
-                    st.subheader("Stil Yakınlığı")
-                    st.dataframe(rows, use_container_width=True, hide_index=True)
-
-
-elif page == "Stilometrik Analiz":
-    st.title("Stilometrik Analiz")
-    st.write("Metnin temel stilometrik özelliklerini çıkarır ve görselleştirir.")
-
-    placeholder = "Analiz edilecek Türkçe metni buraya yapıştırın..." if corpus_mode == "Türkçe" else "Paste the English text to analyze here..."
-    text = st.text_area("Metin", height=260, placeholder=placeholder)
-    if st.button("Analiz Et", type="primary"):
-        if not text.strip():
-            st.warning("Lütfen metin girin.")
-        else:
-            stats = text_stats(text, corpus_mode)
-            flags = quality_flags(text, corpus_mode)
-
-            if flags:
-                for flag in flags:
-                    st.warning(flag)
-
-            cols = st.columns(4)
-            for idx, (label, value) in enumerate(stats.items()):
-                with cols[idx % 4]:
-                    st.markdown(metric_card(value, label), unsafe_allow_html=True)
-
-            fig = plot_features(stats)
-            st.pyplot(fig, use_container_width=True)
-            plt.close(fig)
-
-            if corpus_mode == "Türkçe":
-                rows = style_similarity_rows(text)
-                if rows:
-                    st.subheader("Stil Yakınlığı")
-                    st.dataframe(rows, use_container_width=True, hide_index=True)
-
-
-elif page == "Yerel Üretim":
-    st.title("Yerel LLM ile Üretim")
-    st.write("Ollama üzerinden yerel modelle metin üretir, sonra çıkan metni aynı sınıflandırıcıyla değerlendirir.")
-
-    if corpus_mode != "Türkçe":
-        st.info("Yerel üretim deneyleri şu an Türkçe yazarlar için yapılandırıldı. Yabancı modda tahmin ve stilometrik analiz sayfalarını kullanabilirsin.")
-        st.stop()
-
-    generated = ""
-
-    control_cols = st.columns(3)
-    with control_cols[0]:
-        model_label = st.selectbox("Yerel Model", list(OLLAMA_MODELS.keys()))
-    with control_cols[1]:
-        author_key = st.selectbox(
-            "Hedef Üslup",
-            list(AUTHOR_DISPLAY.keys()),
-            format_func=lambda key: AUTHOR_DISPLAY[key],
-        )
-    with control_cols[2]:
-        topic = st.selectbox("Konu", DEFAULT_TOPICS)
-
-    control_cols = st.columns([1.4, 1, 1, 0.8])
-    with control_cols[0]:
-        custom_topic = st.text_input("Özel konu (opsiyonel)")
-        if custom_topic.strip():
-            topic = custom_topic.strip()
-    with control_cols[1]:
-        min_words = st.slider("Minimum kelime", 80, 180, 120, 10)
-    with control_cols[2]:
-        max_words = st.slider("Maksimum kelime", 120, 260, 170, 10)
-    with control_cols[3]:
-        st.write("")
-        st.write("")
-        run_generation = st.button("Yerel Metin Üret", type="primary")
-
-    if run_generation:
-        model_name = OLLAMA_MODELS[model_label]
-        prompt = build_generation_prompt(author_key, topic, min_words, max_words)
-        with st.spinner("Yerel model çalışıyor; bu işlem biraz sürebilir..."):
-            try:
-                generated = generate_with_ollama(model_name, prompt)
-            except Exception as exc:
-                st.error(str(exc))
-                generated = ""
-
-    if generated:
-        st.subheader("Üretilen Metin")
-        st.text_area("Üretilen Metin", value=generated, height=260, label_visibility="collapsed")
-
-    if generated:
-        st.divider()
-
-        pred, scores = predict_author(generated, pipeline, label_encoder)
-        stats = text_stats(generated, corpus_mode)
-        flags = quality_flags(generated, corpus_mode)
-        target_match = pred == author_key
-
-        st.markdown(
-            f"""
-            <div class="result-box">
-                <div class="metric-label">Üretim Değerlendirmesi</div>
-                <div class="metric-value">{AUTHOR_DISPLAY.get(pred, pred)}</div>
-                <div class="small-note">Hedef üslup: {AUTHOR_DISPLAY[author_key]} · {'Eşleşti' if target_match else 'Eşleşmedi'}</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        if flags:
-            for flag in flags:
-                st.warning(flag)
-
-        note = confidence_note(scores)
-        if note:
-            st.info(note)
-
-        st.subheader("Üretim Kalite Kontrolü")
-        quality_rows = generation_quality_rows(
-            generated,
-            target_author=author_key,
-            predicted_author=pred,
-            corpus_mode=corpus_mode,
-        )
-        st.dataframe(quality_rows, use_container_width=True, hide_index=True)
-
-        display_stats = {"Güven": confidence_level(scores)["label"]}
-        display_stats.update(stats)
-
-        cols = st.columns(4)
-        for idx, (label, value) in enumerate(display_stats.items()):
-            with cols[idx % 4]:
-                st.markdown(metric_card(value, label), unsafe_allow_html=True)
-
-        if scores:
-            st.subheader("Karar Skorları")
-            fig = plot_scores(scores)
-            st.pyplot(fig, use_container_width=True)
-            plt.close(fig)
-
-        if corpus_mode == "Türkçe":
-            rows = style_similarity_rows(generated)
-            if rows:
-                st.subheader("Stil Yakınlığı")
-                st.dataframe(rows, use_container_width=True, hide_index=True)
-
-
-elif page == "Deney Sonuçları":
-    st.title("Deney Sonuçları")
-    st.write("Projede yapılan yerel üretim ve sınıflandırma deneylerinin özetleri.")
-
-    if corpus_mode == "Türkçe":
-        st.subheader("Türkçe Yazar Sınıflandırıcı")
-
-        classifier_rows = [
-            {
-                "Değerlendirme": "Production book-level split",
-                "Sonuç": "%100.00",
-                "Detay": "100-200 kelimelik chunk; test kitapları: Gecelerim, Bomba, Ses",
-            },
-            {
-                "Değerlendirme": "Çoklu book-level validation",
-                "Sonuç": "Ort. %90.49",
-                "Detay": "20 geçerli split; std %9.34; min %73.68; max %100",
-            },
-            {
-                "Değerlendirme": "Production eğitim seti",
-                "Sonuç": "222 örnek",
-                "Detay": "Yazar başına 74 dengeli örnek",
-            },
-            {
-                "Değerlendirme": "Manuel gerçek eser testi",
-                "Sonuç": "3/3 doğru",
-                "Detay": "Üç yazarın kendi eserlerinden alınan pasajlar doğru sınıflandırıldı",
-            },
-        ]
-
-        st.table(classifier_rows)
-
-        st.markdown(
-            """
-            Kullanılan nihai model TF-IDF karakter n-gram + kelime n-gram özellikleri ile LinearSVC sınıflandırıcısından oluşur.
-            Hüseyin Rahmi, yalnızca tek kitap bulunduğu için kitap bazlı doğrulama yapısına dahil edilmemiştir.
-            """
-        )
-
-        st.subheader("Yerel LLM Üretim Deneyleri")
-        summary_rows = [
-            {"Deney": "Gemma3 4B Prompt-Only", "Sonuç": "3/12", "Başarı": "%25.0", "Not": "Ömer Seyfettin sınıfına kayma görüldü."},
-            {"Deney": "Qwen2.5 0.5B LoRA", "Sonuç": "-", "Başarı": "Başarısız", "Not": "Teknik eğitim tamamlandı, üretim kalitesi bozuk çıktı."},
-            {"Deney": "Qwen2.5 1.5B LoRA", "Sonuç": "-", "Başarı": "Başarısız", "Not": "Instruct ve base denemelerinde anlam bütünlüğü korunamadı."},
-            {"Deney": "Turkish-LLM-7B Q4", "Sonuç": "5/15", "Başarı": "%33.3", "Not": "Okunabilirlik arttı; hedef üslup eşleşmesi sınırlı kaldı, kalite kontrol gerekli."},        ]
-        st.table(summary_rows)
-
-        results_path = REPORTS_DIR / "turkish_llm_7b_q4_long_results.csv"
-        rows = read_experiment_results(results_path)
-        if rows:
-            st.subheader("Turkish-LLM-7B Q4 Detaylı Sonuç")
-            st.dataframe(rows, use_container_width=True)
-    else:
-        st.subheader("Yabancı Yazar Sınıflandırıcı")
-        st.markdown(
-            """
-            - Model: TF-IDF + LinearSVC
-            - Kullanılan yazarlar: Arthur Conan Doyle, Edgar Allan Poe, H. G. Wells
-            - Amaç: İngilizce metinlerde klasik yazar üslubuna yakınlık tahmini
-            - Not: Bu mod yerel LLM üretiminden bağımsız, sınıflandırma demosu olarak çalışır.
-            """
-        )
-
-    st.info(
-        "Sınıflandırıcı sonucu, metnin eğitim korpusundaki yazarlara stilistik yakınlığını ölçer; "
-        "tek başına edebi kalite veya gerçek yazarlık kanıtı değildir. "
-        "Bu nedenle uygulamada karar skorları, güven düzeyi, stilometrik metrikler ve kalite uyarıları birlikte gösterilir."
+    text_input = st.text_area(
+        "Metin",
+        height=220,
+        placeholder="Analiz etmek istediginiz metni buraya yapistirin...",
+        label_visibility="collapsed",
+        key="author_input"
     )
+
+    analyze_btn = st.button("Analiz Et", type="primary", key="author_btn")
+
+    if analyze_btn and text_input:
+        if len(text_input.split()) < 30:
+            st.warning("Daha iyi sonuc icin en az 30 kelime girin.")
+        else:
+            with st.spinner("Analiz yapiliyor..."):
+                clean = clean_text(text_input)
+                author, probs = predict_author(clean, models)
+                stats = get_text_stats(text_input)
+
+            st.markdown(f"""
+            <div class='result-box result-author'>
+                Tahmin: {AUTHOR_DISPLAY.get(author, author)}
+            </div>
+            """, unsafe_allow_html=True)
+
+            col1, col2 = st.columns([2, 1])
+
+            with col1:
+                st.markdown("**Guven Skorlari**")
+                for a, prob in sorted(probs.items(),
+                                      key=lambda x: x[1], reverse=True):
+                    name = AUTHOR_DISPLAY.get(a, a)
+                    color = AUTHOR_COLORS.get(a, "#999")
+                    st.markdown(f"""
+                    <div style='display:flex; align-items:center;
+                         margin-bottom:0.6rem; gap:1rem;'>
+                        <div style='width:160px; color:#ccc;
+                             font-size:0.9rem;'>{name}</div>
+                        <div style='flex:1; background:#1e2130;
+                             border-radius:4px; height:12px; overflow:hidden;'>
+                            <div style='width:{prob*100:.1f}%;
+                                 background:{color}; height:100%;
+                                 border-radius:4px;'></div>
+                        </div>
+                        <div style='width:50px; text-align:right;
+                             color:{color}; font-weight:600;
+                             font-size:0.9rem;'>{prob:.1%}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+            with col2:
+                st.markdown("**Metin Istatistikleri**")
+                for label, val in stats.items():
+                    st.markdown(render_stat_box(val, label),
+                                unsafe_allow_html=True)
+
+    elif analyze_btn:
+        st.warning("Lutfen bir metin girin.")
+
+# ─── SAYFA: Human vs LLM ──────────────────────────────────────────────────────
+elif page == "Human vs LLM":
+    st.markdown("<div class='app-title'>Human vs LLM Tespiti</div>",
+                unsafe_allow_html=True)
+    st.markdown("<div class='app-subtitle'>Bu metin bir insan tarafından mı yoksa yapay zeka tarafından mı yazıldı?</div>",
+                unsafe_allow_html=True)
+
+    text_input = st.text_area(
+        "Metin",
+        height=220,
+        placeholder="Analiz etmek istediginiz metni buraya yapistirin...",
+        label_visibility="collapsed",
+        key="hvl_input"
+    )
+
+    analyze_btn = st.button("Analiz Et", type="primary", key="hvl_btn")
+
+    if analyze_btn and text_input:
+        if len(text_input.split()) < 30:
+            st.warning("Daha iyi sonuc icin en az 30 kelime girin.")
+        else:
+            with st.spinner("Analiz yapiliyor..."):
+                clean = clean_text(text_input)
+                pred, llm_prob = predict_human_vs_llm(clean, models)
+                stats = get_text_stats(text_input)
+
+            if pred == "llm":
+                st.markdown("""
+                <div class='result-box result-llm'>
+                    Bu metin buyuk olasilikla bir YAPAY ZEKA tarafindan yazildi.
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown("""
+                <div class='result-box result-human'>
+                    Bu metin buyuk olasilikla bir INSAN tarafindan yazildi.
+                </div>
+                """, unsafe_allow_html=True)
+
+            col1, col2, col3 = st.columns([1, 1, 1])
+
+            with col1:
+                fig = plot_gauge(llm_prob, "LLM Olasiligi")
+                st.pyplot(fig, use_container_width=True)
+                plt.close()
+
+            with col2:
+                fig = plot_gauge(1 - llm_prob, "Human Olasiligi")
+                st.pyplot(fig, use_container_width=True)
+                plt.close()
+
+            with col3:
+                st.markdown("**Metin Istatistikleri**")
+                for label, val in stats.items():
+                    st.markdown(render_stat_box(val, label),
+                                unsafe_allow_html=True)
+
+    elif analyze_btn:
+        st.warning("Lutfen bir metin girin.")
+
+# ─── SAYFA: Stilometrik Analiz ────────────────────────────────────────────────
+elif page == "Stilometrik Analiz":
+    st.markdown("<div class='app-title'>Stilometrik Analiz</div>",
+                unsafe_allow_html=True)
+    st.markdown("<div class='app-subtitle'>Metnin stilometrik profilini analiz edin ve yazar profilleriyle karsilastirin.</div>",
+                unsafe_allow_html=True)
+
+    text_input = st.text_area(
+        "Metin",
+        height=200,
+        placeholder="Analiz etmek istediginiz metni buraya yapistirin...",
+        label_visibility="collapsed",
+        key="style_input"
+    )
+
+    analyze_btn = st.button("Analiz Et", type="primary", key="style_btn")
+
+    if analyze_btn and text_input:
+        if len(text_input.split()) < 30:
+            st.warning("Daha iyi sonuc icin en az 30 kelime girin.")
+        else:
+            with st.spinner("Analiz yapiliyor..."):
+                clean = clean_text(text_input)
+                features = get_stylometric_features(clean)
+                author, probs = predict_author(clean, models)
+                pred, llm_prob = predict_human_vs_llm(clean, models)
+                stats = get_text_stats(text_input)
+
+            author_short = author.capitalize()
+
+            # Özet satırı
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.markdown(
+                    render_stat_box(
+                        AUTHOR_DISPLAY.get(author, author),
+                        "Tahmin Edilen Yazar",
+                        font_size="0.95rem"
+                    ), unsafe_allow_html=True)
+            with col2:
+                kaynak = "LLM" if pred == "llm" else "Human"
+                color = "#e040fb" if pred == "llm" else "#2196F3"
+                st.markdown(f"""
+                <div class='stat-box'>
+                    <div class='stat-value' style='font-size:1.2rem;
+                         color:{color};'>{kaynak}</div>
+                    <div class='stat-label'>Kaynak Tahmini</div>
+                </div>""", unsafe_allow_html=True)
+            with col3:
+                st.markdown(
+                    render_stat_box(stats["Kelime Sayisi"], "Kelime Sayisi"),
+                    unsafe_allow_html=True)
+            with col4:
+                st.markdown(
+                    render_stat_box(stats["Cumle Sayisi"], "Cumle Sayisi"),
+                    unsafe_allow_html=True)
+
+            st.markdown("---")
+
+            col1, col2 = st.columns([1, 1])
+
+            with col1:
+                st.markdown(f"**Radar Grafigi — {author_short} Profili ile Karsilastirma**")
+                fig = plot_radar(features, author)
+                st.pyplot(fig, use_container_width=True)
+                plt.close()
+
+            with col2:
+                st.markdown("**Ozellik Dagilimi**")
+                fig = plot_feature_bars(features)
+                st.pyplot(fig, use_container_width=True)
+                plt.close()
+
+            st.markdown("---")
+            st.markdown("**Detayli Stilometrik Ozellikler**")
+            feat_display = {
+                "Ort. Kelime Uzunlugu": features["avg_word_length"],
+                "Ort. Cumle Uzunlugu": features["avg_sentence_length"],
+                "TTR": features["type_token_ratio"],
+                "Stopword Orani": features["stopword_ratio"],
+                "Virgul Orani": features["comma_rate"],
+                "Noktali Virgul Orani": features["semicolon_rate"],
+                "Soru Isareti Orani": features["question_rate"],
+                "Unlem Orani": features["exclamation_rate"],
+            }
+            cols = st.columns(4)
+            for i, (name, val) in enumerate(feat_display.items()):
+                with cols[i % 4]:
+                    st.markdown(
+                        render_stat_box(val, name, font_size="1.2rem"),
+                        unsafe_allow_html=True)
+
+    elif analyze_btn:
+        st.warning("Lutfen bir metin girin.")
+
+# ─── SAYFA: Karşılaştırma Modu ────────────────────────────────────────────────
+elif page == "Karsilastirma Modu":
+    st.markdown("<div class='app-title'>Karsilastirma Modu</div>",
+                unsafe_allow_html=True)
+    st.markdown("<div class='app-subtitle'>Iki metni yan yana analiz edin ve stilometrik profillerini karsilastirin.</div>",
+                unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("**Metin 1**")
+        text1 = st.text_area(
+            "",
+            height=200,
+            placeholder="Birinci metni buraya yapistirin...",
+            key="compare_text1",
+            label_visibility="collapsed"
+        )
+
+    with col2:
+        st.markdown("**Metin 2**")
+        text2 = st.text_area(
+            "",
+            height=200,
+            placeholder="Ikinci metni buraya yapistirin...",
+            key="compare_text2",
+            label_visibility="collapsed"
+        )
+
+    analyze_btn = st.button("Iki Metni Karsilastir", type="primary",
+                            use_container_width=True, key="compare_btn")
+
+    if analyze_btn and text1 and text2:
+        if len(text1.split()) < 30 or len(text2.split()) < 30:
+            st.warning("Her iki metin icin de en az 30 kelime girin.")
+        else:
+            with st.spinner("Analiz yapiliyor..."):
+                clean1 = clean_text(text1)
+                clean2 = clean_text(text2)
+                author1, probs1 = predict_author(clean1, models)
+                author2, probs2 = predict_author(clean2, models)
+                pred1, llm_prob1 = predict_human_vs_llm(clean1, models)
+                pred2, llm_prob2 = predict_human_vs_llm(clean2, models)
+                feat1 = get_stylometric_features(clean1)
+                feat2 = get_stylometric_features(clean2)
+                stats1 = get_text_stats(text1)
+                stats2 = get_text_stats(text2)
+
+            st.markdown("---")
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.markdown("### Metin 1")
+                st.markdown(f"""
+                <div class='result-box result-author'>
+                    Yazar: {AUTHOR_DISPLAY.get(author1, author1)}
+                </div>""", unsafe_allow_html=True)
+
+                kaynak1 = "Yapay Zeka" if pred1 == "llm" else "Insan"
+                box1 = "result-llm" if pred1 == "llm" else "result-human"
+                st.markdown(f"""
+                <div class='result-box {box1}'>
+                    Kaynak: {kaynak1} ({llm_prob1:.0%} LLM olasiligi)
+                </div>""", unsafe_allow_html=True)
+
+                for label, val in stats1.items():
+                    st.markdown(
+                        render_stat_box(val, label, font_size="1.2rem"),
+                        unsafe_allow_html=True)
+
+            with col2:
+                st.markdown("### Metin 2")
+                st.markdown(f"""
+                <div class='result-box result-author'>
+                    Yazar: {AUTHOR_DISPLAY.get(author2, author2)}
+                </div>""", unsafe_allow_html=True)
+
+                kaynak2 = "Yapay Zeka" if pred2 == "llm" else "Insan"
+                box2 = "result-llm" if pred2 == "llm" else "result-human"
+                st.markdown(f"""
+                <div class='result-box {box2}'>
+                    Kaynak: {kaynak2} ({llm_prob2:.0%} LLM olasiligi)
+                </div>""", unsafe_allow_html=True)
+
+                for label, val in stats2.items():
+                    st.markdown(
+                        render_stat_box(val, label, font_size="1.2rem"),
+                        unsafe_allow_html=True)
+
+            st.markdown("---")
+            st.markdown("### Stilometrik Ozellik Karsilastirmasi")
+
+            feat_keys = [
+                "avg_word_length", "avg_sentence_length",
+                "type_token_ratio", "stopword_ratio",
+                "comma_rate", "semicolon_rate"
+            ]
+            feat_labels_map = {
+                "avg_word_length": "Ort. Kelime Uzunlugu",
+                "avg_sentence_length": "Ort. Cumle Uzunlugu",
+                "type_token_ratio": "TTR",
+                "stopword_ratio": "Stopword Orani",
+                "comma_rate": "Virgul Orani",
+                "semicolon_rate": "Noktali Virgul Orani",
+            }
+
+            labels = [feat_labels_map[k] for k in feat_keys]
+            vals1 = [feat1.get(k, 0) for k in feat_keys]
+            vals2 = [feat2.get(k, 0) for k in feat_keys]
+
+            x = np.arange(len(labels))
+            width = 0.35
+
+            fig, ax = plt.subplots(figsize=(10, 4), facecolor="#0f1117")
+            ax.set_facecolor("#1e2130")
+            ax.bar(x - width/2, vals1, width, label="Metin 1",
+                   color="#4a90d9", edgecolor="#0f1117")
+            ax.bar(x + width/2, vals2, width, label="Metin 2",
+                   color="#00e5ff", edgecolor="#0f1117")
+            ax.set_xticks(x)
+            ax.set_xticklabels(labels, rotation=20, ha="right",
+                               color="#8b8d98", fontsize=8)
+            ax.tick_params(colors="#8b8d98")
+            ax.spines["top"].set_visible(False)
+            ax.spines["right"].set_visible(False)
+            ax.spines["bottom"].set_color("#2d3250")
+            ax.spines["left"].set_color("#2d3250")
+            ax.grid(axis="y", color="#2d3250", linewidth=0.5)
+            ax.legend(facecolor="#1e2130", labelcolor="#ccc",
+                      edgecolor="#2d3250", fontsize=9)
+            plt.tight_layout()
+            st.pyplot(fig, use_container_width=True)
+            plt.close()
+
+    elif analyze_btn:
+        st.warning("Lutfen her iki metin alanini da doldurun.")
+
+# ─── SAYFA: Stil Üretici ──────────────────────────────────────────────────────
+elif page == "Stil Uretici":
+    st.markdown("<div class='app-title'>Stil Uretici</div>",
+                unsafe_allow_html=True)
+    st.markdown("<div class='app-subtitle'>Secilen yazar stilinde orijinal metin uretin ve stilometrik analizini gorun.</div>",
+                unsafe_allow_html=True)
+
+    col1, col2 = st.columns([1, 2])
+
+    with col1:
+        st.markdown("**Ayarlar**")
+
+        st.info("Model: Groq — Llama 3.3 70B")
+        llm_choice = "Groq (Llama 3.3)"
+
+        author_choice = st.selectbox(
+            "Yazar Stili",
+            ["Edgar Allan Poe", "Arthur Conan Doyle", "H.G. Wells"]
+        )
+
+        topic_choice = st.selectbox(
+            "Konu",
+            [
+                "Gece yarim kasabaya gelen yabanci",
+                "Terk edilmis bir evin gizemi",
+                "Bilimsel bir kesif",
+                "Bir cinayet sorusturmasi",
+                "Dogaustu bir karsilasma",
+                "Ozel konu"
+            ]
+        )
+
+        if topic_choice == "Ozel konu":
+            topic = st.text_input("Konunuzu yazin:")
+            if not topic:
+                topic = "gizemli bir olay"
+        else:
+            topic = topic_choice
+
+        word_count_target = st.slider(
+            "Hedef Kelime Sayisi",
+            min_value=100,
+            max_value=500,
+            value=250,
+            step=50
+        )
+
+        controlled = st.checkbox(
+            "Kontrollu Mod",
+            value=True,
+            help="Isaretlenirse karakter ve eser isimleri yasaklanir, sadece stil taklit edilir."
+        )
+
+        generate_btn = st.button("Metin Uret", type="primary",
+                                 use_container_width=True)
+
+    with col2:
+        st.markdown("**Uretilen Metin**")
+
+        if generate_btn:
+            author_map = {
+                "Edgar Allan Poe": "poe",
+                "Arthur Conan Doyle": "doyle",
+                "H.G. Wells": "wells"
+            }
+            author_key = author_map[author_choice]
+
+            style_descriptions = {
+                "poe": "gothic atmosphere, psychological dread, long complex sentences, rich archaic vocabulary, dramatic punctuation with semicolons and dashes, first-person unreliable narrator",
+                "doyle": "analytical first-person narration, methodical reasoning stated explicitly, Victorian English, short punchy dialogue, logical deduction from physical observations",
+                "wells": "matter-of-fact journalistic tone, scientific speculation, social commentary, plain direct sentences contrasting with complex ideas, early science fiction atmosphere"
+            }
+
+            forbidden_map = {
+                "poe": "Do NOT mention: ravens, pendulums, Usher, Legrand, or other iconic Poe characters.",
+                "doyle": "Do NOT mention: Sherlock Holmes, Watson, Baker Street, Moriarty, or any Doyle characters.",
+                "wells": "Do NOT mention: time machines, Martians, invisible men, or iconic Wells story elements."
+            }
+
+            forbidden = forbidden_map[author_key] if controlled else ""
+
+            prompt = f"""Write approximately {word_count_target} words of original prose about: {topic}
+
+Style: Write in the style of {author_choice}.
+Characteristics: {style_descriptions[author_key]}
+{forbidden}
+
+Rules:
+- Pure prose only, no headings or commentary
+- Start directly with the story
+- Authentic to the author's period and voice"""
+
+            with st.spinner(f"{author_choice} stilinde metin uretiliyor..."):
+                try:
+                    if llm_choice == "Groq (Llama 3.3)":
+                        client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+                        response = client.chat.completions.create(
+                            model="llama-3.3-70b-versatile",
+                            messages=[
+                                {
+                                    "role": "system",
+                                    "content": f"You are an expert literary stylist specializing in {author_choice}'s writing style."
+                                },
+                                {
+                                    "role": "user",
+                                    "content": prompt
+                                }
+                            ],
+                            temperature=0.85,
+                            max_tokens=800
+                        )
+                        generated_text = response.choices[0].message.content
+
+                    st.text_area(
+                        "",
+                        value=generated_text,
+                        height=280,
+                        label_visibility="collapsed",
+                        key="generated_output"
+                    )
+
+                    st.markdown("---")
+                    st.markdown("**Stilometrik Analiz**")
+
+                    with st.spinner("Analiz yapiliyor..."):
+                        clean = clean_text(generated_text)
+                        author_pred, probs = predict_author(clean, models)
+                        pred_hvl, llm_prob = predict_human_vs_llm(clean, models)
+                        features = get_stylometric_features(clean)
+                        stats = get_text_stats(generated_text)
+
+                    match = author_pred == author_key
+                    match_color = "#4CAF50" if match else "#F44336"
+                    match_text = "Basarili" if match else "Basarisiz"
+
+                    col_a, col_b, col_c, col_d = st.columns(4)
+                    with col_a:
+                        st.markdown(
+                            render_stat_box(
+                                AUTHOR_DISPLAY.get(author_pred, author_pred),
+                                "Model Tahmini",
+                                font_size="0.9rem"
+                            ), unsafe_allow_html=True)
+                    with col_b:
+                        st.markdown(f"""
+                        <div class='stat-box'>
+                            <div class='stat-value' style='font-size:1.2rem;
+                                 color:{match_color};'>{match_text}</div>
+                            <div class='stat-label'>Stil Taklidi</div>
+                        </div>""", unsafe_allow_html=True)
+                    with col_c:
+                        st.markdown(
+                            render_stat_box(f"{llm_prob:.0%}", "LLM Olasiligi"),
+                            unsafe_allow_html=True)
+                    with col_d:
+                        st.markdown(
+                            render_stat_box(stats["Kelime Sayisi"], "Kelime Sayisi"),
+                            unsafe_allow_html=True)
+
+                    st.markdown("**Radar Grafigi — Yazar Profili ile Karsilastirma**")
+                    fig = plot_radar(features, author_key)
+                    st.pyplot(fig, use_container_width=True)
+                    plt.close()
+
+                except Exception as e:
+                    st.error(f"Hata: {e}")
+                    st.info("API key .env dosyasinda tanimli olmayabilir. GROQ_API_KEY kontrol edin.")
