@@ -17,7 +17,6 @@ build/
 *.ipynb_checkpoints
 
 # Veri ve modeller (büyük dosyalar)
-data/raw/
 data/processed/
 models/*.pkl
 models/*.joblib
