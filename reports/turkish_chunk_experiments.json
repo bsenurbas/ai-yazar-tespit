@@ -1,0 +1,78 @@
+[
+  {
+    "name": "short_80_160",
+    "min_words": 80,
+    "max_words": 160,
+    "dataset_size": 368,
+    "accuracy": 0.9024390243902439,
+    "train_size": 285,
+    "test_size": 41,
+    "train_distribution": {
+      "sabahattin_ali": 95,
+      "omer_seyfettin": 95,
+      "ahmet_rasim": 95
+    },
+    "test_distribution": {
+      "ahmet_rasim": 11,
+      "omer_seyfettin": 16,
+      "sabahattin_ali": 14
+    }
+  },
+  {
+    "name": "current_90_180",
+    "min_words": 90,
+    "max_words": 180,
+    "dataset_size": 305,
+    "accuracy": 0.925,
+    "train_size": 225,
+    "test_size": 40,
+    "train_distribution": {
+      "sabahattin_ali": 75,
+      "ahmet_rasim": 75,
+      "omer_seyfettin": 75
+    },
+    "test_distribution": {
+      "ahmet_rasim": 14,
+      "omer_seyfettin": 14,
+      "sabahattin_ali": 12
+    }
+  },
+  {
+    "name": "medium_100_200",
+    "min_words": 100,
+    "max_words": 200,
+    "dataset_size": 265,
+    "accuracy": 1.0,
+    "train_size": 192,
+    "test_size": 28,
+    "train_distribution": {
+      "sabahattin_ali": 64,
+      "ahmet_rasim": 64,
+      "omer_seyfettin": 64
+    },
+    "test_distribution": {
+      "ahmet_rasim": 8,
+      "omer_seyfettin": 10,
+      "sabahattin_ali": 10
+    }
+  },
+  {
+    "name": "long_120_220",
+    "min_words": 120,
+    "max_words": 220,
+    "dataset_size": 234,
+    "accuracy": 1.0,
+    "train_size": 183,
+    "test_size": 23,
+    "train_distribution": {
+      "sabahattin_ali": 61,
+      "omer_seyfettin": 61,
+      "ahmet_rasim": 61
+    },
+    "test_distribution": {
+      "ahmet_rasim": 6,
+      "omer_seyfettin": 8,
+      "sabahattin_ali": 9
+    }
+  }
+]

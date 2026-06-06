@@ -1,0 +1,16 @@
+file,target,prediction,word_count,reliable,correct
+ahmet_rasim_topic_01.txt,ahmet_rasim,sabahattin_ali,230,True,False
+ahmet_rasim_topic_02.txt,ahmet_rasim,ahmet_rasim,52,False,True
+ahmet_rasim_topic_03.txt,ahmet_rasim,ahmet_rasim,96,False,True
+ahmet_rasim_topic_04.txt,ahmet_rasim,sabahattin_ali,248,True,False
+ahmet_rasim_topic_05.txt,ahmet_rasim,sabahattin_ali,166,True,False
+omer_seyfettin_topic_01.txt,omer_seyfettin,omer_seyfettin,181,True,True
+omer_seyfettin_topic_02.txt,omer_seyfettin,omer_seyfettin,163,True,True
+omer_seyfettin_topic_03.txt,omer_seyfettin,sabahattin_ali,262,True,False
+omer_seyfettin_topic_04.txt,omer_seyfettin,sabahattin_ali,257,True,False
+omer_seyfettin_topic_05.txt,omer_seyfettin,ahmet_rasim,267,True,False
+sabahattin_ali_topic_01.txt,sabahattin_ali,omer_seyfettin,128,True,False
+sabahattin_ali_topic_02.txt,sabahattin_ali,ahmet_rasim,86,False,False
+sabahattin_ali_topic_03.txt,sabahattin_ali,omer_seyfettin,144,True,False
+sabahattin_ali_topic_04.txt,sabahattin_ali,omer_seyfettin,159,True,False
+sabahattin_ali_topic_05.txt,sabahattin_ali,sabahattin_ali,110,True,True
